@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+{% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paramètres - MARKETMIND</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts - Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #7AAEB5;
+            --primary-dark: #5A8F96;
+            --primary-light: #9ECBD1;
+            --primary-gradient: linear-gradient(135deg, #7AAEB5 0%, #9ECBD1 100%);
+            --danger: #e74c3c;
+            --danger-hover: #c0392b;
+            --success: #2ecc71;
+            --success-hover: #27ae60;
+            --warning: #f39c12;
+            --warning-hover: #e67e22;
+            --info: #3498db;
+            --info-hover: #2980b9;
+            --sidebar-width: 280px;
+            --header-height: 70px;
+            --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d;
+            --bg-light: #f5f9fa;
+            --bg-white: #ffffff;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            --border-color: #e5e7eb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background-color: var(--bg-white);
+            box-shadow: var(--shadow);
+            z-index: 100;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+        }
+
+          .sidebar-header {
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-header img {
+            height: 60px;
+        }
+        .sidebar-header h2 {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+
+        .menu-item {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-radius: 0 30px 30px 0;
+            margin-right: 15px;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background-color: rgba(122, 174, 181, 0.1);
+            color: var(--primary);
+        }
+
+        .menu-item.active {
+            background-color: var(--primary-light);
+            color: white;
+            font-weight: 500;
+        }
+
+        .menu-item i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .header {
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            background-color: var(--bg-white);
+            box-shadow: var(--shadow);
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: var(--text-primary);
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+            border: 2px solid var(--primary-light);
+        }
+
+        /* Card */
+        .card {
+            background-color: var(--bg-white);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin-bottom: 20px;
+            border: none;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--bg-white);
+        }
+
+        .card-header h2 {
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.875rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: var(--danger-hover);
+            color: white;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: var(--success-hover);
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #e5e7eb;
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background-color: #d1d5db;
+            color: var(--text-primary);
+        }
+
+        .badge-counter {
+            background-color: var(--danger);
+            color: white;
+            border-radius: 50%;
+            padding: 0.25em 0.6em;
+            font-size: 0.75rem;
+            margin-left: 5px;
+        }
+
+        /* Form */
+        .form-label {
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control, .form-select {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
+            transition: all 0.2s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(122, 174, 181, 0.2);
+        }
+
+        .form-check-input {
+            width: 1.2em;
+            height: 1.2em;
+            margin-top: 0.15em;
+            border: 1px solid var(--border-color);
+            border-radius: 0.25em;
+            transition: all 0.2s ease;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .form-check-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(122, 174, 181, 0.2);
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        /* Logo */
+        .logo {
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .header {
+                position: relative;
+            }
+            
+            .menu-toggle {
+                display: block;
+                position: absolute;
+                left: 20px;
+                top: 50%;
+                transform: translateY(-50%);
+                font-size: 1.5rem;
+                cursor: pointer;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <div class="d-flex align-items-center">
+                <h1>Paramètres</h1>
+            </div>
+            <div class="user-info">
+                <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="Admin">
+                <div class="dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {{ user.username }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fas fa-id-card"></i> Profil</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'login' %}"><i class="fas fa-sign-out-alt"></i> Déconnexion</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages de notification -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Paramètres généraux -->
+        <div class="card">
+            <div class="card-header">
+                <h2>Paramètres généraux</h2>
+            </div>
+            <div class="card-body">
+                <form method="post" action="{% url 'admin_settings' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="siteName" class="form-label">Nom du site</label>
+                        <input type="text" class="form-control" id="siteName" name="site_name" value="MARKETMIND">
+                    </div>
+                    <div class="mb-3">
+                        <label for="siteDescription" class="form-label">Description du site</label>
+                        <textarea class="form-control" id="siteDescription" name="site_description" rows="3">Plateforme d'analyse et d'optimisation marketing</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="contactEmail" class="form-label">Email de contact</label>
+                        <input type="email" class="form-control" id="contactEmail" name="contact_email" value="contact@marketmind.com">
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="enableNotifications" name="enable_notifications" checked>
+                        <label class="form-check-label" for="enableNotifications">Activer les notifications par email</label>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="enableRegistration" name="enable_registration" checked>
+                        <label class="form-check-label" for="enableRegistration">Autoriser les inscriptions</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Paramètres de messagerie -->
+        <div class="card">
+            <div class="card-header">
+                <h2>Paramètres de messagerie</h2>
+            </div>
+            <div class="card-body">
+                <form method="post" action="{% url 'admin_settings' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="smtpServer" class="form-label">Serveur SMTP</label>
+                        <input type="text" class="form-control" id="smtpServer" name="smtp_server" value="smtp.example.com">
+                    </div>
+                    <div class="mb-3">
+                        <label for="smtpPort" class="form-label">Port SMTP</label>
+                        <input type="number" class="form-control" id="smtpPort" name="smtp_port" value="587">
+                    </div>
+                    <div class="mb-3">
+                        <label for="smtpUsername" class="form-label">Nom d'utilisateur SMTP</label>
+                        <input type="text" class="form-control" id="smtpUsername" name="smtp_username" value="user@example.com">
+                    </div>
+                    <div class="mb-3">
+                        <label for="smtpPassword" class="form-label">Mot de passe SMTP</label>
+                        <input type="password" class="form-control" id="smtpPassword" name="smtp_password" value="********">
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="smtpSsl" name="smtp_ssl" checked>
+                        <label class="form-check-label" for="smtpSsl">Utiliser SSL/TLS</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Enregistrer les paramètres</button>
+                    <button type="button" class="btn btn-secondary ms-2">Tester la connexion</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Paramètres de sécurité -->
+        <div class="card">
+            <div class="card-header">
+                <h2>Paramètres de sécurité</h2>
+            </div>
+            <div class="card-body">
+                <form method="post" action="{% url 'admin_settings' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="sessionTimeout" class="form-label">Délai d'expiration de session (minutes)</label>
+                        <input type="number" class="form-control" id="sessionTimeout" name="session_timeout" value="30">
+                    </div>
+                    <div class="mb-3">
+                        <label for="maxLoginAttempts" class="form-label">Nombre maximal de tentatives de connexion</label>
+                        <input type="number" class="form-control" id="maxLoginAttempts" name="max_login_attempts" value="5">
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="enableTwoFactor" name="enable_two_factor">
+                        <label class="form-check-label" for="enableTwoFactor">Activer l'authentification à deux facteurs</label>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="enforceStrongPasswords" name="enforce_strong_passwords" checked>
+                        <label class="form-check-label" for="enforceStrongPasswords">Exiger des mots de passe forts</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Enregistrer les paramètres</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="{% static 'images/logo.png' %}" alt="MARKETMIND">
+        </div>
+        <div class="sidebar-menu">
+            <a href="{% url 'admin_dashboard' %}" class="menu-item">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Tableau de bord</span>
+            </a>
+            <a href="{% url 'admin_users' %}" class="menu-item">
+                <i class="fas fa-users"></i>
+                <span>Utilisateurs</span>
+            </a>
+            <a href="{% url 'admin_messages' %}" class="menu-item ">
+                <i class="fas fa-envelope"></i>
+                <span>Messages</span>
+                <span class="badge-counter">{{ new_messages_count }}</span>
+            </a>
+            <a href="{% url 'admin_settings' %}" class="menu-item active">
+                <i class="fas fa-cog"></i>
+                <span>Paramètres</span>
+            </a>
+            <a href="{% url 'index' %}" class="menu-item">
+                <i class="fas fa-home"></i>
+                <span>Page d'accueil</span>
+            </a>
+            <a href="{% url 'logout' %}" class="menu-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Déconnexion</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

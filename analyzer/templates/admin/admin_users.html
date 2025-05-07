@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+{% load static %}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestion des Utilisateurs - MARKETMIND</title>
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Font Awesome pour les icônes -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!-- Google Fonts - Poppins -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --primary: #7AAEB5;
+        --primary-dark: #5A8F96;
+        --primary-light: #9ECBD1;
+        --primary-gradient: linear-gradient(135deg, #7AAEB5 0%, #9ECBD1 100%);
+        --danger: #e74c3c;
+        --danger-hover: #c0392b;
+        --success: #2ecc71;
+        --success-hover: #27ae60;
+        --warning: #f39c12;
+        --warning-hover: #e67e22;
+        --info: #3498db;
+        --info-hover: #2980b9;
+        --sidebar-width: 280px;
+        --header-height: 70px;
+        --text-primary: #2c3e50;
+        --text-secondary: #7f8c8d;
+        --bg-light: #f5f9fa;
+        --bg-white: #ffffff;
+        --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        --border-color: #e5e7eb;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: var(--bg-light);
+        color: var(--text-primary);
+        min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: var(--sidebar-width);
+        height: 100vh;
+        background-color: var(--bg-white);
+        box-shadow: var(--shadow);
+        z-index: 100;
+        transition: all 0.3s ease;
+        overflow-y: auto;
+    }
+
+     .sidebar-header {
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-header img {
+            height: 60px;
+        }
+    .sidebar-header h2 {
+        color: white;
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    .sidebar-menu {
+        padding: 20px 0;
+    }
+
+    .menu-item {
+        padding: 12px 20px;
+        display: flex;
+        align-items: center;
+        color: var(--text-secondary);
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border-radius: 0 30px 30px 0;
+        margin-right: 15px;
+    }
+
+    .menu-item:hover, .menu-item.active {
+        background-color: rgba(122, 174, 181, 0.1);
+        color: var(--primary);
+    }
+
+    .menu-item.active {
+        background-color: var(--primary-light);
+        color: white;
+        font-weight: 500;
+    }
+
+    .menu-item i {
+        margin-right: 10px;
+        font-size: 1.2rem;
+    }
+
+    /* Main Content */
+    .main-content {
+        margin-left: var(--sidebar-width);
+        padding: 20px;
+        min-height: 100vh;
+    }
+
+    .header {
+        height: var(--header-height);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        background-color: var(--bg-white);
+        box-shadow: var(--shadow);
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
+
+    .header h1 {
+        color: var(--text-primary);
+        font-size: 1.8rem;
+        font-weight: 600;
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+    }
+
+    .user-info img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+        object-fit: cover;
+        border: 2px solid var(--primary-light);
+    }
+
+    /* Card */
+    .card {
+        background-color: var(--bg-white);
+        border-radius: 12px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        margin-bottom: 20px;
+        border: none;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .card-header {
+        padding: 20px;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: var(--bg-white);
+    }
+
+    .card-header h2 {
+        font-size: 1.5rem;
+        color: var(--text-primary);
+        margin: 0;
+        font-weight: 600;
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    /* Table */
+    .table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .table th {
+        background-color: var(--bg-light);
+        color: var(--text-secondary);
+        font-weight: 600;
+        text-align: left;
+        padding: 12px 15px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid var(--border-color);
+        vertical-align: middle;
+    }
+
+    .table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .table tr:hover {
+        background-color: rgba(122, 174, 181, 0.05);
+    }
+
+    /* Status badge */
+    .status {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    .status.active {
+        background-color: rgba(46, 204, 113, 0.1);
+        color: var(--success);
+    }
+
+    .status.inactive {
+        background-color: rgba(231,204,113,0.1);
+        color: var(--success);
+    }
+
+    .status.inactive {
+        background-color: rgba(231, 76, 60, 0.1);
+        color: var(--danger);
+    }
+
+    /* Buttons */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+    .btn-sm {
+        padding: 6px 12px;
+        font-size: 0.875rem;
+    }
+
+    .btn-primary {
+        background: var(--primary-gradient);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+        color: white;
+    }
+
+    .btn-danger {
+        background-color: var(--danger);
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background-color: var(--danger-hover);
+        color: white;
+    }
+
+    .btn-warning {
+        background-color: var(--warning);
+        color: white;
+    }
+
+    .btn-warning:hover {
+        background-color: var(--warning-hover);
+        color: white;
+    }
+
+    .btn-success {
+        background-color: var(--success);
+        color: white;
+    }
+
+    .btn-success:hover {
+        background-color: var(--success-hover);
+        color: white;
+    }
+
+    .btn-secondary {
+        background-color: #e5e7eb;
+        color: var(--text-primary);
+    }
+
+    .btn-secondary:hover {
+        background-color: #d1d5db;
+        color: var(--text-primary);
+    }
+
+    /* User avatar */
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--primary-gradient);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    /* Filters */
+    .filters {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .filter-item {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control, .form-select {
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 0.5rem 0.75rem;
+        transition: all 0.2s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(122, 174, 181, 0.2);
+    }
+
+    /* Pagination */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .pagination .page-item .page-link {
+        color: var(--primary);
+        border-color: var(--border-color);
+        border-radius: 8px;
+        margin: 0 2px;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: var(--primary);
+        border-color: var(--primary);
+        color: white;
+    }
+
+    .pagination .page-item .page-link:hover {
+        background-color: var(--bg-light);
+    }
+
+    .badge-counter {
+        background-color: var(--danger);
+        color: white;
+        border-radius: 50%;
+        padding: 0.25em 0.6em;
+        font-size: 0.75rem;
+        margin-left: 5px;
+    }
+
+    /* Animation */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+        animation: fadeIn 0.5s ease forwards;
+    }
+
+    /* Modal */
+    .modal-header {
+        background: var(--primary-gradient);
+        color: white;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .modal-content {
+        border-radius: 12px;
+        border: none;
+        box-shadow: var(--shadow);
+    }
+
+    .modal-footer {
+        border-top: 1px solid var(--border-color);
+    }
+
+    /* Logo */
+    .logo {
+        height: 40px;
+        margin-right: 10px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .sidebar {
+            transform: translateX(-100%);
+        }
+        
+        .main-content {
+            margin-left: 0;
+        }
+        
+        .sidebar.show {
+            transform: translateX(0);
+        }
+        
+        .header {
+            position: relative;
+        }
+        
+        .menu-toggle {
+            display: block;
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+    }
+</style>
+</head>
+<body>
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <div class="d-flex align-items-center">
+                <h1>Gestion des Utilisateurs</h1>
+            </div>
+            <div class="user-info">
+                <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="Admin">
+                <div class="dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {{ user.username }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fas fa-id-card"></i> Profil</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'login' %}"><i class="fas fa-sign-out-alt"></i> Déconnexion</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages de notification -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Filtres -->
+        <div class="card">
+            <div class="card-header">
+                <h2>Filtres</h2>
+                <button class="btn btn-sm btn-secondary" id="resetFilters">
+                    <i class="fas fa-undo"></i> Réinitialiser
+                </button>
+            </div>
+            <div class="card-body">
+                <form method="get" action="{% url 'admin_users' %}">
+                    <div class="filters">
+                        <div class="filter-item">
+                            <label for="role" class="form-label">Rôle</label>
+                            <select class="form-select" id="role" name="role">
+                                <option value="">Tous</option>
+                                <option value="admin" {% if request.GET.role == 'admin' %}selected{% endif %}>Administrateurs</option>
+                                <option value="staff" {% if request.GET.role == 'staff' %}selected{% endif %}>Staff</option>
+                                <option value="user" {% if request.GET.role == 'user' %}selected{% endif %}>Utilisateurs</option>
+                            </select>
+                        </div>
+                        <div class="filter-item">
+                            <label for="status" class="form-label">Statut</label>
+                            <select class="form-select" id="status" name="status">
+                                <option value="">Tous</option>
+                                <option value="active" {% if request.GET.status == 'active' %}selected{% endif %}>Actifs</option>
+                                <option value="inactive" {% if request.GET.status == 'inactive' %}selected{% endif %}>Inactifs</option>
+                            </select>
+                        </div>
+                        <div class="filter-item">
+                            <label for="date_from" class="form-label">Date d'inscription depuis</label>
+                            <input type="date" class="form-control" id="date_from" name="date_from" value="{{ request.GET.date_from }}">
+                        </div>
+                        <div class="filter-item">
+                            <label for="search" class="form-label">Recherche</label>
+                            <input type="text" class="form-control" id="search" name="search" placeholder="Nom, email..." value="{{ request.GET.search }}">
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end mt-3">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i> Filtrer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Liste des utilisateurs -->
+        <div class="card">
+            <div class="card-header">
+                <h2>Utilisateurs ({{ users_list.count }})</h2>
+                <div>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                        <i class="fas fa-user-plus"></i> Ajouter un utilisateur
+                    </button>
+                    <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Retour au tableau de bord
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table" id="usersTable">
+                        <thead>
+                            <tr>
+                                <th>Utilisateur</th>
+                                <th>Email</th>
+                                <th>Rôle</th>
+                                <th>Date d'inscription</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user_item in users_list %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        {% if user_item.profile_image %}
+                                            <img src="{{ user_item.profile_image.url }}" alt="{{ user_item.username }}" class="me-3" style="width: 40px; height: 40px; border-radius: 50%;">
+                                        {% else %}
+                                            <div class="user-avatar me-3">{{ user_item.username|first|upper }}</div>
+                                        {% endif %}
+                                        <div>{{ user_item.username }}</div>
+                                    </div>
+                                </td>
+                                <td>{{ user_item.email }}</td>
+                                <td>
+                                    {% if user_item.is_superuser %}
+                                        <span class="badge bg-danger">Admin</span>
+                                    {% elif user_item.is_staff %}
+                                        <span class="badge bg-warning">Staff</span>
+                                    {% else %}
+                                        <span class="badge bg-info">Utilisateur</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ user_item.date_joined|date:"d/m/Y" }}</td>
+                                <td>
+                                    {% if user_item.is_active %}
+                                        <span class="status active">Actif</span>
+                                    {% else %}
+                                        <span class="status inactive">Inactif</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-sm btn-primary view-user" data-id="{{ user_item.id }}">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-warning edit-user" data-id="{{ user_item.id }}">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger delete-user" data-id="{{ user_item.id }}" data-username="{{ user_item.username }}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center py-4">
+                                    <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                                    <p>Aucun utilisateur trouvé</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                {% if users_list.has_other_pages %}
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        {% if users_list.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ users_list.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                        
+                        {% for i in users_list.paginator.page_range %}
+                            {% if users_list.number == i %}
+                            <li class="page-item active"><a class="page-link" href="#">{{ i }}</a></li>
+                            {% else %}
+                            <li class="page-item"><a class="page-link" href="?page={{ i }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if users_list.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ users_list.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+     <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="{% static 'images/logo.png' %}" alt="MARKETMIND">
+        </div>
+        <div class="sidebar-menu">
+            <a href="{% url 'admin_dashboard' %}" class="menu-item">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Tableau de bord</span>
+            </a>
+            <a href="{% url 'admin_users' %}" class="menu-item active">
+                <i class="fas fa-users"></i>
+                <span>Utilisateurs</span>
+            </a>
+            <a href="{% url 'admin_settings' %}" class="menu-item ">
+                <i class="fas fa-envelope"></i>
+                <span>Messages</span>
+                <span class="badge-counter">{{ new_messages_count }}</span>
+            </a>
+            <a href="{% url 'admin_settings' %}" class="menu-item">
+                <i class="fas fa-cog"></i>
+                <span>Paramètres</span>
+            </a>
+            <a href="{% url 'index' %}" class="menu-item">
+                <i class="fas fa-home"></i>
+                <span>Page d'accueil</span>
+            </a>
+            <a href="{% url 'logout' %}" class="menu-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Déconnexion</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Modal Voir Utilisateur -->
+    <div class="modal fade" id="viewUserModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Détails de l'utilisateur</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-4">
+                        <div id="userAvatarView" class="user-avatar mx-auto" style="width: 80px; height: 80px; font-size: 2rem;"></div>
+                        <h4 id="userNameView" class="mt-3"></h4>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Email:</strong> <span id="userEmailView"></span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Rôle:</strong> <span id="userRoleView"></span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Date d'inscription:</strong> <span id="userDateJoinedView"></span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Statut:</strong> <span id="userStatusView"></span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Dernière connexion:</strong> <span id="userLastLoginView"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                    <button type="button" class="btn btn-warning" id="editUserBtn">Modifier</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Modifier Utilisateur -->
+    <div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modifier l'utilisateur</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editUserForm" method="post" action="{% url 'admin_user_edit' 0 %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="user_id" id="editUserId">
+                        <div class="mb-3">
+                            <label for="editUsername" class="form-label">Nom d'utilisateur</label>
+                            <input type="text" class="form-control" id="editUsername" name="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="editEmail" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editPassword" class="form-label">Nouveau mot de passe (laisser vide pour ne pas changer)</label>
+                            <input type="password" class="form-control" id="editPassword" name="password">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editRole" class="form-label">Rôle</label>
+                            <select class="form-select" id="editRole" name="role">
+                                <option value="user">Utilisateur</option>
+                                <option value="staff">Staff</option>
+                                <option value="admin">Administrateur</option>
+                            </select>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="editActive" name="is_active">
+                            <label class="form-check-label" for="editActive">Utilisateur actif</label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" form="editUserForm" class="btn btn-warning">Enregistrer les modifications</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Ajouter Utilisateur -->
+    <div class="modal fade" id="addUserModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ajouter un utilisateur</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addUserForm" method="post" action="{% url 'admin_user_add' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Nom d'utilisateur</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Mot de passe</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="role" class="form-label">Rôle</label>
+                            <select class="form-select" id="role" name="role">
+                                <option value="user">Utilisateur</option>
+                                <option value="staff">Staff</option>
+                                <option value="admin">Administrateur</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" form="addUserForm" class="btn btn-primary">Ajouter</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Supprimer Utilisateur -->
+    <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmer la suppression</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Êtes-vous sûr de vouloir supprimer l'utilisateur <strong id="deleteUserName"></strong> ?</p>
+                    <p class="text-danger">Cette action est irréversible.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <form id="deleteUserForm" method="post" action="{% url 'admin_user_delete' 0 %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="user_id" id="deleteUserId">
+                        <button type="submit" class="btn btn-danger">Supprimer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gestion des utilisateurs
+            const viewUserBtns = document.querySelectorAll('.view-user');
+            const editUserBtns = document.querySelectorAll('.edit-user');
+            const deleteUserBtns = document.querySelectorAll('.delete-user');
+            const viewUserModal = new bootstrap.Modal(document.getElementById('viewUserModal'));
+            const editUserModal = new bootstrap.Modal(document.getElementById('editUserModal'));
+            const deleteUserModal = new bootstrap.Modal(document.getElementById('deleteUserModal'));
+            
+            viewUserBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const userId = this.getAttribute('data-id');
+                    
+                    // Charger les détails de l'utilisateur via AJAX
+                    fetch(`/admin/api/user/${userId}/`)
+                        .then(response => response.json())
+                        .then(data => {
+                            document.getElementById('userNameView').textContent = data.username;
+                            document.getElementById('userEmailView').textContent = data.email;
+                            document.getElementById('userDateJoinedView').textContent = data.date_joined;
+                            document.getElementById('userLastLoginView').textContent = data.last_login || 'Jamais';
+                            
+                            // Afficher le rôle
+                            let roleText = 'Utilisateur';
+                            if (data.is_superuser) {
+                                roleText = 'Administrateur';
+                            } else if (data.is_staff) {
+                                roleText = 'Staff';
+                            }
+                            document.getElementById('userRoleView').textContent = roleText;
+                            
+                            // Afficher le statut
+                            let statusText = data.is_active ? 'Actif' : 'Inactif';
+                            let statusClass = data.is_active ? 'text-success' : 'text-danger';
+                            document.getElementById('userStatusView').innerHTML = `<span class="${statusClass}">${statusText}</span>`;
+                            
+                            // Configurer l'avatar
+                            const userAvatarView = document.getElementById('userAvatarView');
+                            userAvatarView.textContent = data.username.charAt(0).toUpperCase();
+                            
+                            // Configurer le bouton d'édition
+                            const editUserBtn = document.getElementById('editUserBtn');
+                            editUserBtn.setAttribute('data-id', userId);
+                            
+                            viewUserModal.show();
+                        });
+                });
+            });
+            
+            // Bouton pour ouvrir le modal d'édition
+            document.getElementById('editUserBtn').addEventListener('click', function() {
+                const userId = this.getAttribute('data-id');
+                
+                // Charger les détails de l'utilisateur via AJAX
+                fetch(`/admin/api/user/${userId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('editUserId').value = userId;
+                        document.getElementById('editUsername').value = data.username;
+                        document.getElementById('editEmail').value = data.email;
+                        document.getElementById('editPassword').value = '';
+                        
+                        // Sélectionner le rôle
+                        const roleSelect = document.getElementById('editRole');
+                        if (data.is_superuser) {
+                            roleSelect.value = 'admin';
+                        } else if (data.is_staff) {
+                            roleSelect.value = 'staff';
+                        } else {
+                            roleSelect.value = 'user';
+                        }
+                        
+                        // Cocher si actif
+                        document.getElementById('editActive').checked = data.is_active;
+                        
+                        // Mettre à jour l'action du formulaire
+                        const form = document.getElementById('editUserForm');
+                        form.action = form.action.replace(/\/0\/$/, `/${userId}/`);
+                        
+                        viewUserModal.hide();
+                        editUserModal.show();
+                    });
+            });
+            
+            editUserBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const userId = this.getAttribute('data-id');
+                    
+                    // Charger les détails de l'utilisateur via AJAX
+                    fetch(`/admin/api/user/${userId}/`)
+                        .then(response => response.json())
+                        .then(data => {
+                            document.getElementById('editUserId').value = userId;
+                            document.getElementById('editUsername').value = data.username;
+                            document.getElementById('editEmail').value = data.email;
+                            document.getElementById('editPassword').value = '';
+                            
+                            // Sélectionner le rôle
+                            const roleSelect = document.getElementById('editRole');
+                            if (data.is_superuser) {
+                                roleSelect.value = 'admin';
+                            } else if (data.is_staff) {
+                                roleSelect.value = 'staff';
+                            } else {
+                                roleSelect.value = 'user';
+                            }
+                            
+                            // Cocher si actif
+                            document.getElementById('editActive').checked = data.is_active;
+                            
+                            // Mettre à jour l'action du formulaire
+                            const form = document.getElementById('editUserForm');
+                            form.action = form.action.replace(/\/0\/$/, `/${userId}/`);
+                            
+                            editUserModal.show();
+                        });
+                });
+            });
+            
+            deleteUserBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const userId = this.getAttribute('data-id');
+                    const username = this.getAttribute('data-username');
+                    
+                    document.getElementById('deleteUserId').value = userId;
+                    document.getElementById('deleteUserName').textContent = username;
+                    
+                    // Mettre à jour l'action du formulaire
+                    const form = document.getElementById('deleteUserForm');
+                    form.action = form.action.replace(/\/0\/$/, `/${userId}/`);
+                    
+                    deleteUserModal.show();
+                });
+            });
+            
+            // Réinitialiser les filtres
+            const resetFiltersBtn = document.getElementById('resetFilters');
+            if (resetFiltersBtn) {
+                resetFiltersBtn.addEventListener('click', function() {
+                    window.location.href = "{% url 'admin_users' %}";
+                });
+            }
+        });
+    </script>
+</body>
+</html>

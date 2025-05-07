@@ -1,0 +1,32 @@
+# Fichiers Python
+*.pyc
+__pycache__/
+
+# Dossiers virtuels
+venv/
+env/
+ENV/
+
+# Paramètres utilisateur de VSCode
+.vscode/
+
+# Fichiers de base de données
+*.sqlite3
+
+# Clés ou infos sensibles
+*.env
+.env
+
+# Fichiers de modèle ML
+*.pkl
+*.sav
+*.joblib
+models/
+
+# Django static/media
+/static/
+/media/
+
+# Dossiers de migration inutiles (optionnel)
+**/migrations/*.pyc
+**/migrations/__pycache__/

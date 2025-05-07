@@ -1,0 +1,941 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Prédiction de ROI - MARKETMIND{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Variables - Inspirées par les couleurs du logo MARKETMIND */
+    :root {
+        --primary-color: #7AAEB5;
+        --secondary-color: #9ECBD1;
+        --accent-color: #5D8A91;
+        --dark-color: #334155;
+        --light-color: #F8FAFC;
+        --gray-color: #64748B;
+        --border-color: #E2E8F0;
+        
+        --primary-gradient: linear-gradient(135deg, #7AAEB5, #9ECBD1);
+        --secondary-gradient: linear-gradient(135deg, #F0F4FD, #E0F2F4);
+        --card-shadow: 0 10px 30px rgba(122, 174, 181, 0.15);
+        --hover-shadow: 0 15px 35px rgba(122, 174, 181, 0.25);
+        --transition-medium: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* Welcome Banner */
+    .welcome-banner {
+        background: var(--secondary-gradient);
+        border-radius: 20px;
+        padding: 2.5rem;
+        margin-bottom: 2.5rem;
+        margin-top: 5rem;
+        box-shadow: var(--card-shadow);
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        animation: fadeInUp 1s ease-out;
+    }
+
+    .welcome-banner::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%237AAEB5' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+        opacity: 0.5;
+    }
+
+    .welcome-content {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    @media (min-width: 768px) {
+        .welcome-content {
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+    }
+
+    .welcome-title {
+        font-size: 2.25rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+        background: linear-gradient(to right, var(--accent-color), var(--primary-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: -0.5px;
+    }
+
+    .welcome-text {
+        color: var(--gray-color);
+        font-weight: 400;
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
+
+    @media (min-width: 640px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .stats-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+
+    .stat-card {
+        background-color: white;
+        border-radius: 20px;
+        padding: 1.75rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        box-shadow: var(--card-shadow);
+        transition: var(--transition-medium);
+        border: 1px solid rgba(226, 232, 240, 0.5);
+        animation: fadeInUp 1s ease-out;
+    }
+
+    .stat-card:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .stat-card:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+
+    .stat-card:nth-child(4) {
+        animation-delay: 0.6s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--hover-shadow);
+        border-color: rgba(122, 174, 181, 0.2);
+    }
+
+    .stat-icon {
+        width: 3.5rem;
+        height: 3.5rem;
+        border-radius: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.25rem;
+        font-size: 1.5rem;
+        transition: var(--transition-medium);
+    }
+
+    .stat-card:hover .stat-icon {
+        transform: scale(1.1);
+    }
+
+    .stat-icon-primary {
+        background-color: rgba(122, 174, 181, 0.1);
+        color: var(--primary-color);
+    }
+
+    .stat-icon-secondary {
+        background-color: rgba(158, 203, 209, 0.1);
+        color: var(--secondary-color);
+    }
+
+    .stat-icon-accent {
+        background-color: rgba(93, 138, 145, 0.1);
+        color: var(--accent-color);
+    }
+
+    .stat-value {
+        font-size: 2.25rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(to right, var(--accent-color), var(--primary-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: -1px;
+    }
+
+    .stat-label {
+        font-size: 1rem;
+        color: var(--gray-color);
+        font-weight: 500;
+    }
+
+    /* Card */
+    .card {
+        background-color: white;
+        border-radius: 20px;
+        box-shadow: var(--card-shadow);
+        overflow: hidden;
+        border: 1px solid rgba(226, 232, 240, 0.5);
+        margin-bottom: 1.75rem;
+        transition: var(--transition-medium);
+        animation: fadeInUp 1s ease-out;
+    }
+
+    .card:hover {
+        box-shadow: var(--hover-shadow);
+        border-color: rgba(122, 174, 181, 0.2);
+    }
+
+    .card-header {
+        padding: 1.25rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 600;
+        border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+    }
+
+    .card-header h3 {
+        font-size: 1.1rem;
+        letter-spacing: -0.3px;
+        color: var(--primary-color);
+        margin: 0;
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    /* Form Elements */
+    .form-group {
+        margin-bottom: 1.75rem;
+        position: relative;
+        transition: var(--transition-medium);
+        animation: formFieldFadeIn 0.5s ease-out forwards;
+    }
+
+    .form-group:hover {
+        transform: translateY(-2px);
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: var(--dark-color);
+        transition: color 0.3s ease;
+    }
+
+    .form-control-wrapper {
+        position: relative;
+        transition: var(--transition-medium);
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.85rem 1rem 0.85rem 3rem;
+        border-radius: 0.75rem;
+        border: 2px solid rgba(226, 232, 240, 0.8);
+        background-color: #f8fafc;
+        color: var(--dark-color);
+        transition: var(--transition-medium);
+        font-size: 0.95rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 4px rgba(122, 174, 181, 0.1);
+        background-color: #ffffff;
+    }
+
+    .form-group:hover .form-control {
+        border-color: var(--primary-color);
+    }
+
+    .form-group:hover .form-label {
+        color: var(--primary-color);
+    }
+
+    .form-text {
+        display: block;
+        margin-top: 0.5rem;
+        font-size: 0.875rem;
+        color: var(--gray-color);
+        transition: var(--transition-medium);
+    }
+
+    .form-group:hover .form-text {
+        color: var(--primary-color);
+    }
+
+    .invalid-feedback {
+        display: block;
+        width: 100%;
+        margin-top: 0.5rem;
+        font-size: 0.875rem;
+        color: #e11d48;
+        animation: shake 0.5s ease-in-out;
+    }
+
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        20%, 60% { transform: translateX(-5px); }
+        40%, 80% { transform: translateX(5px); }
+    }
+
+    /* Form Icon */
+    .form-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--primary-color);
+        font-size: 1.1rem;
+        transition: var(--transition-medium);
+    }
+
+    .form-group:hover .form-icon {
+        transform: translateY(-50%) scale(1.1);
+        color: var(--accent-color);
+    }
+
+    /* Button */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.85rem 1.75rem;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: var(--transition-medium);
+        cursor: pointer;
+        border: none;
+        font-size: 0.95rem;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+    }
+
+    .btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateX(-100%);
+        transition: var(--transition-medium);
+        z-index: -1;
+    }
+
+    .btn:hover::before {
+        transform: translateX(0);
+    }
+
+    .btn-primary {
+        background: var(--primary-gradient);
+        color: white;
+        box-shadow: 0 4px 15px rgba(122, 174, 181, 0.3);
+    }
+
+    .btn-primary:hover {
+        box-shadow: 0 8px 25px rgba(122, 174, 181, 0.4);
+        transform: translateY(-3px);
+    }
+
+    .btn-primary a {
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn i {
+        margin-right: 10px;
+        font-size: 1.1rem;
+    }
+
+    /* Result Section */
+    .result-section {
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(226, 232, 240, 0.8);
+        animation: fadeIn 0.8s ease-in-out;
+    }
+
+    .result-value {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(to right, var(--accent-color), var(--primary-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: pulse 2s infinite;
+    }
+
+    .result-label {
+        font-size: 1rem;
+        color: var(--gray-color);
+        font-weight: 500;
+    }
+
+    .interpretation-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--dark-color);
+    }
+
+    .interpretation-text {
+        color: var(--gray-color);
+        margin-bottom: 1rem;
+        line-height: 1.6;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-outline {
+        background: transparent;
+        border: 2px solid var(--primary-color);
+        color: var(--primary-color);
+        transition: var(--transition-medium);
+    }
+
+    .btn-outline:hover {
+        background: rgba(122, 174, 181, 0.1);
+        transform: translateY(-3px);
+    }
+
+    /* Badge */
+    .badge {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        border-radius: 2rem;
+        transition: var(--transition-medium);
+        animation: fadeInUp 0.5s ease-out;
+    }
+
+    .badge-success {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+
+    .badge-success:hover {
+        background-color: rgba(16, 185, 129, 0.2);
+        transform: translateY(-2px);
+    }
+
+    .badge-warning {
+        background-color: rgba(245, 158, 11, 0.1);
+        color: #d97706;
+    }
+
+    .badge-warning:hover {
+        background-color: rgba(245, 158, 11, 0.2);
+        transform: translateY(-2px);
+    }
+
+    .badge-danger {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: #dc2626;
+    }
+
+    .badge-danger:hover {
+        background-color: rgba(239, 68, 68, 0.2);
+        transform: translateY(-2px);
+    }
+
+    /* Form step indicator */
+    .form-step-indicator {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 2rem;
+    }
+
+    .step-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: #e2e8f0;
+        margin: 0 5px;
+        transition: var(--transition-medium);
+    }
+
+    .step-dot.active {
+        background-color: var(--primary-color);
+        transform: scale(1.2);
+    }
+
+    /* Tooltip */
+    .form-tooltip {
+        position: absolute;
+        top: -40px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: var(--dark-color);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-size: 0.85rem;
+        opacity: 0;
+        visibility: hidden;
+        transition: var(--transition-medium);
+        z-index: 10;
+        white-space: nowrap;
+    }
+
+    .form-tooltip::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border-width: 5px;
+        border-style: solid;
+        border-color: var(--dark-color) transparent transparent transparent;
+    }
+
+    .form-control-wrapper:hover .form-tooltip {
+        opacity: 1;
+        visibility: visible;
+        top: -45px;
+    }
+
+    /* Checkbox */
+    .checkbox-wrapper {
+        display: flex;
+        align-items: center;
+        margin-top: 0.5rem;
+    }
+
+    .custom-checkbox {
+        position: relative;
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
+    }
+
+    .custom-checkbox input {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+        height: 0;
+        width: 0;
+    }
+
+    .checkmark {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 20px;
+        width: 20px;
+        background-color: #f8fafc;
+        border: 2px solid #e2e8f0;
+        border-radius: 4px;
+        transition: var(--transition-medium);
+    }
+
+    .custom-checkbox:hover input ~ .checkmark {
+        border-color: var(--primary-color);
+    }
+
+    .custom-checkbox input:checked ~ .checkmark {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    .checkmark:after {
+        content: "";
+        position: absolute;
+        display: none;
+    }
+
+    .custom-checkbox input:checked ~ .checkmark:after {
+        display: block;
+    }
+
+    .custom-checkbox .checkmark:after {
+        left: 6px;
+        top: 2px;
+        width: 5px;
+        height: 10px;
+        border: solid white;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+
+    @keyframes formFieldFadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-group:nth-child(1) { animation-delay: 0.1s; }
+    .form-group:nth-child(2) { animation-delay: 0.2s; }
+    .form-group:nth-child(3) { animation-delay: 0.3s; }
+    .form-group:nth-child(4) { animation-delay: 0.4s; }
+    .form-group:nth-child(5) { animation-delay: 0.5s; }
+    .form-group:nth-child(6) { animation-delay: 0.6s; }
+
+    /* Range input */
+    input[type="range"] {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 8px;
+        border-radius: 5px;
+        background: #e2e8f0;
+        outline: none;
+        transition: var(--transition-medium);
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: var(--primary-gradient);
+        cursor: pointer;
+        transition: var(--transition-medium);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: var(--primary-gradient);
+        cursor: pointer;
+        transition: var(--transition-medium);
+    }
+
+    input[type="range"]:hover::-webkit-slider-thumb {
+        transform: scale(1.2);
+        box-shadow: 0 0 10px rgba(122, 174, 181, 0.5);
+    }
+
+    input[type="range"]:hover::-moz-range-thumb {
+        transform: scale(1.2);
+        box-shadow: 0 0 10px rgba(122, 174, 181, 0.5);
+    }
+
+    .range-value {
+        position: absolute;
+        right: 0;
+        top: 0;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--primary-color);
+        transition: var(--transition-medium);
+    }
+
+    /* Select */
+    select.form-control {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%237AAEB5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 16px;
+        padding-right: 2.5rem;
+    }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<!-- Main Content -->
+<div class="main-content">
+    <div class="container">
+        <!-- Welcome Banner -->
+        <div class="welcome-banner">
+            <div class="welcome-content">
+                <div>
+                    <h2 class="welcome-title">Prédiction de ROI</h2>
+                    <p class="welcome-text">Optimisez vos campagnes marketing grâce à notre outil de prédiction avancé</p>
+                </div>
+                <div>
+                    <a href="{% url 'dashboard' %}" class="btn btn-primary">
+                        <i class="fas fa-chart-line"></i>
+                        Retour au tableau de bord
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon stat-icon-primary">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="stat-value">98%</div>
+                <div class="stat-label">Précision</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon stat-icon-secondary">
+                    <i class="fas fa-bullseye"></i>
+                </div>
+                <div class="stat-value">4.2</div>
+                <div class="stat-label">ROI moyen</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon stat-icon-accent">
+                    <i class="fas fa-tags"></i>
+                </div>
+                <div class="stat-value">12</div>
+                <div class="stat-label">Canaux analysés</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon stat-icon-primary">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-value">500+</div>
+                <div class="stat-label">Prédictions</div>
+            </div>
+        </div>
+
+        <!-- Prediction Form -->
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Formulaire de prédiction</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-step-indicator">
+                            <div class="step-dot active"></div>
+                            <div class="step-dot"></div>
+                            <div class="step-dot"></div>
+                        </div>
+                        
+                        <form method="post" class="prediction-form">
+                            {% csrf_token %}
+                            
+                            <div class="row">
+                                {% for field in form %}
+                                <div class="col-md-6 col-12">
+                                    <div class="form-group">
+                                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                                        <div class="form-control-wrapper">
+                                            {% if "budget" in field.label|lower or "coût" in field.label|lower %}
+                                                <i class="fas fa-euro-sign form-icon"></i>
+                                                <div class="form-tooltip">Entrez votre budget marketing</div>
+                                            {% elif "temps" in field.label|lower or "durée" in field.label|lower %}
+                                                <i class="fas fa-clock form-icon"></i>
+                                                <div class="form-tooltip">Durée de la campagne</div>
+                                            {% elif "taux" in field.label|lower or "pourcentage" in field.label|lower %}
+                                                <i class="fas fa-percent form-icon"></i>
+                                                <div class="form-tooltip">Pourcentage estimé</div>
+                                            {% elif "nombre" in field.label|lower or "quantité" in field.label|lower %}
+                                                <i class="fas fa-hashtag form-icon"></i>
+                                                <div class="form-tooltip">Quantité estimée</div>
+                                            {% elif "canal" in field.label|lower or "média" in field.label|lower %}
+                                                <i class="fas fa-bullhorn form-icon"></i>
+                                                <div class="form-tooltip">Sélectionnez votre canal marketing</div>
+                                            {% elif "client" in field.label|lower or "utilisateur" in field.label|lower %}
+                                                <i class="fas fa-users form-icon"></i>
+                                                <div class="form-tooltip">Nombre de clients ciblés</div>
+                                            {% else %}
+                                                <i class="fas fa-chart-bar form-icon"></i>
+                                                <div class="form-tooltip">Entrez une valeur</div>
+                                            {% endif %}
+                                            
+                                            {{ field }}
+                                            
+                                            {% if "range" in field.field.widget.input_type %}
+                                                <span class="range-value">0</span>
+                                            {% endif %}
+                                        </div>
+                                        {% if field.help_text %}
+                                        <small class="form-text">{{ field.help_text }}</small>
+                                        {% endif %}
+                                        {% if field.errors %}
+                                        <div class="invalid-feedback">
+                                            {{ field.errors }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="checkbox-wrapper">
+                                <label class="custom-checkbox">
+                                    <input type="checkbox" checked="checked">
+                                    <span class="checkmark"></span>
+                                </label>
+                                <span>Enregistrer cette prédiction dans mon historique</span>
+                            </div>
+
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-calculator"></i>
+                                    Prédire le ROI
+                                </button>
+                            </div>
+                        </form>
+                        
+                        {% if prediction is not None %}
+                        <div class="result-section">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3>Résultat de la prédiction</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-6 col-12 text-center mb-4 mb-md-0">
+                                            <div class="result-value">{{ prediction }}</div>
+                                            <div class="result-label">ROI estimé</div>
+                                            
+                                            {% if prediction >= 4 %}
+                                            <div class="badge badge-success mt-3">Excellent</div>
+                                            {% elif prediction >= 2.5 %}
+                                            <div class="badge badge-warning mt-3">Bon</div>
+                                            {% else %}
+                                            <div class="badge badge-danger mt-3">À améliorer</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-6 col-12">
+                                            <h4 class="interpretation-title">Interprétation</h4>
+                                            <p class="interpretation-text">Votre ROI prévu de <strong>{{ prediction }}</strong> indique 
+                                            {% if prediction >= 4 %}
+                                            un excellent retour sur investissement pour votre campagne marketing.
+                                            {% elif prediction >= 2.5 %}
+                                            un bon retour sur investissement pour votre campagne marketing.
+                                            {% else %}
+                                            un retour sur investissement à améliorer pour votre campagne marketing.
+                                            {% endif %}
+                                            </p>
+                                            <p class="interpretation-text">Pour chaque euro investi, vous pouvez vous attendre à un retour de <strong>{{ prediction }}</strong> euros.</p>
+                                            
+                                            <div class="action-buttons">
+                                                <a href="#" class="btn btn-outline">
+                                                    <i class="fas fa-download"></i>
+                                                    Télécharger le rapport
+                                                </a>
+                                                <a href="#" class="btn btn-outline">
+                                                    <i class="fas fa-share-alt"></i>
+                                                    Partager
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Gestion des sliders (input range)
+        const rangeInputs = document.querySelectorAll('input[type="range"]');
+        rangeInputs.forEach(input => {
+            const rangeValue = input.closest('.form-control-wrapper').querySelector('.range-value');
+            if (rangeValue) {
+                rangeValue.textContent = input.value;
+                
+                input.addEventListener('input', function() {
+                    rangeValue.textContent = this.value;
+                });
+            }
+        });
+        
+        // Animation au focus
+        const formInputs = document.querySelectorAll('.prediction-form input, .prediction-form select, .prediction-form textarea');
+        formInputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.closest('.form-group').style.transform = 'translateY(-5px)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.closest('.form-group').style.transform = '';
+            });
+        });
+        
+        // Simuler une progression par étapes
+        const submitButton = document.querySelector('.prediction-form button[type="submit"]');
+        const stepDots = document.querySelectorAll('.step-dot');
+        let currentStep = 0;
+        
+        if (submitButton && !document.querySelector('.result-section')) {
+            submitButton.addEventListener('click', function(e) {
+                // Cette partie est juste pour la démonstration - à adapter selon vos besoins
+                if (!document.querySelector('.result-section')) {
+                    e.preventDefault();
+                    currentStep++;
+                    
+                    if (currentStep < stepDots.length) {
+                        stepDots.forEach((dot, index) => {
+                            dot.classList.toggle('active', index === currentStep);
+                        });
+                        
+                        // Simuler un chargement
+                        submitButton.disabled = true;
+                        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calcul en cours...';
+                        
+                        setTimeout(() => {
+                            submitButton.disabled = false;
+                            submitButton.innerHTML = '<i class="fas fa-calculator"></i> Prédire le ROI';
+                            
+                            if (currentStep === stepDots.length - 1) {
+                                // Soumettre le formulaire à la dernière étape
+                                document.querySelector('.prediction-form').submit();
+                            }
+                        }, 1500);
+                    }
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

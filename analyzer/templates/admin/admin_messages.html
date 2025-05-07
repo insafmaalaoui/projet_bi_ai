@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Messages - MARKETMIND</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts - Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+      :root {
+            --primary: #7AAEB5;
+            --primary-dark: #5A8F96;
+            --primary-light: #9ECBD1;
+            --primary-gradient: linear-gradient(135deg, #7AAEB5 0%, #9ECBD1 100%);
+            --danger: #e74c3c;
+            --danger-hover: #c0392b;
+            --success: #2ecc71;
+            --success-hover: #27ae60;
+            --warning: #f39c12;
+            --warning-hover: #e67e22;
+            --info: #3498db;
+            --info-hover: #2980b9;
+            --sidebar-width: 280px;
+            --header-height: 70px;
+            --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d;
+            --bg-light: #f5f9fa;
+            --bg-white: #ffffff;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            --border-color: #e5e7eb;
+        }
+        :root {
+            --primary-color: #7aaeb5;
+            --secondary-color: #9ecbd1;
+            --accent-color: #5d8a91;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --info-color: #3b82f6;
+            --light-color: #f8fafc;
+            --dark-color: #334155;
+            --gray-color: #64748b;
+            --border-color: #e2e8f0;
+
+            --primary-gradient: linear-gradient(135deg, #7aaeb5, #9ecbd1);
+            --secondary-gradient: linear-gradient(135deg, #f0f4fd, #e0f2f4);
+            --card-shadow: 0 10px 30px rgba(122, 174, 181, 0.15);
+            --hover-shadow: 0 15px 35px rgba(122, 174, 181, 0.25);
+            --transition-medium: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Poppins", sans-serif;
+            background-color: #f8fafc;
+            color: var(--dark-color);
+            min-height: 100vh;
+            display: flex;
+        }
+ /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background-color: var(--bg-white);
+            box-shadow: var(--shadow);
+            z-index: 100;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+        }
+
+          .sidebar-header {
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-header img {
+            height: 60px;
+        }
+        .sidebar-header h2 {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+
+        .menu-item {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-radius: 0 30px 30px 0;
+            margin-right: 15px;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background-color: rgba(122, 174, 181, 0.1);
+            color: var(--primary);
+        }
+
+        .menu-item.active {
+            background-color: var(--primary-light);
+            color: white;
+            font-weight: 500;
+        }
+
+        .menu-item i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+            transition: var(--transition-medium);
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 0.75rem;
+            border: 2px solid var(--primary-color);
+        }
+
+        .dropdown-toggle {
+            color: var(--dark-color);
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .dropdown-toggle::after {
+            display: none;
+        }
+
+        .dropdown-toggle i {
+            margin-left: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .dropdown-menu {
+            border-radius: 0.75rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem;
+            min-width: 200px;
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            transition: var(--transition-medium);
+        }
+
+        .dropdown-item i {
+            margin-right: 0.75rem;
+            color: var(--gray-color);
+            width: 1rem;
+            text-align: center;
+        }
+
+        .dropdown-item:hover {
+            background-color: rgba(122, 174, 181, 0.1);
+            color: var(--primary-color);
+        }
+
+        .dropdown-divider {
+            margin: 0.5rem 0;
+            border-color: var(--border-color);
+        }
+
+        /* Cards */
+        .card {
+            background-color: white;
+            border-radius: 1rem;
+            box-shadow: var(--card-shadow);
+            border: none;
+            margin-bottom: 2rem;
+            transition: var(--transition-medium);
+            overflow: hidden;
+        }
+
+        .card:hover {
+            box-shadow: var(--hover-shadow);
+        }
+
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Table */
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table th {
+            font-weight: 600;
+            color: var(--primary-color);
+            border-bottom-width: 1px;
+            padding: 0.75rem 1rem;
+        }
+
+        .table td {
+            padding: 1rem;
+            vertical-align: middle;
+            color: var(--dark-color);
+            border-color: var(--border-color);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: var(--transition-medium);
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: 0 4px 12px rgba(122, 174, 181, 0.2);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 6px 15px rgba(122, 174, 181, 0.3);
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #f1f5f9;
+            color: var(--gray-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #e2e8f0;
+            color: var(--dark-color);
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #0ca678;
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626;
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 0.35rem 0.75rem;
+            font-size: 0.85rem;
+        }
+
+        .btn i {
+            margin-right: 0.5rem;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+
+        .page-item.active .page-link {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .page-link {
+            color: var(--primary-color);
+            border-radius: 0.25rem;
+            margin: 0 0.2rem;
+        }
+
+        .page-link:hover {
+            color: var(--accent-color);
+            background-color: rgba(122, 174, 181, 0.1);
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .filter-item {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control, .form-select {
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(122, 174, 181, 0.25);
+        }
+
+         /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .header {
+                position: relative;
+            }
+            
+            .menu-toggle {
+                display: block;
+                position: absolute;
+                left: 20px;
+                top: 50%;
+                transform: translateY(-50%);
+                font-size: 1.5rem;
+                cursor: pointer;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1.5rem;
+            }
+
+            .card {
+                margin-bottom: 1.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .sidebar {
+                width: 0;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .user-info {
+                margin-top: 1rem;
+            }
+        }
+
+        /* Styles spécifiques à la page des messages */
+        .message-preview {
+            max-width: 300px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .status.new {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+        }
+        
+        .status.responded {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+        }
+        
+        .modal-header {
+            background: var(--primary-gradient);
+            color: white;
+        }
+        
+        .modal-content {
+            border-radius: 1rem;
+            border: none;
+            overflow: hidden;
+        }
+        
+        .modal-footer {
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .bg-light {
+            background-color: #f8fafc !important;
+        }
+        
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            animation: fadeIn 0.5s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="{% static 'images/logo.png' %}" alt="MARKETMIND">
+        </div>
+        <div class="sidebar-menu">
+            <a href="{% url 'admin_dashboard' %}" class="menu-item">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Tableau de bord</span>
+            </a>
+            <a href="{% url 'admin_users' %}" class="menu-item">
+                <i class="fas fa-users"></i>
+                <span>Utilisateurs</span>
+            </a>
+            <a href="{% url 'admin_messages' %}" class="menu-item active">
+                <i class="fas fa-envelope"></i>
+                <span>Messages</span>
+                <span class="badge-counter">{{ new_messages_count }}</span>
+            </a>
+            <a href="{% url 'admin_settings' %}" class="menu-item">
+                <i class="fas fa-cog"></i>
+                <span>Paramètres</span>
+            </a>
+            <a href="{% url 'index' %}" class="menu-item">
+                <i class="fas fa-home"></i>
+                <span>Page d'accueil</span>
+            </a>
+            <a href="{% url 'logout' %}" class="menu-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Déconnexion</span>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <div class="d-flex align-items-center">
+                <h1>Gestion des Messages</h1>
+            </div>
+            <div class="user-info">
+                <img src="{% static 'images/admin.jpg' %}" alt="Admin">
+                <div class="dropdown">
+                    <a class="dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {{ user.username }}
+                        <i class="fas fa-chevron-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fas fa-id-card"></i> Profil</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Déconnexion</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages de notification -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Filtres -->
+        <div class="card">
+            <div class="card-header">
+                <h2>Filtres</h2>
+                <button class="btn btn-sm btn-secondary" id="resetFilters">
+                    <i class="fas fa-undo"></i> Réinitialiser
+                </button>
+            </div>
+            <div class="card-body">
+                <form method="get" action="{% url 'admin_messages' %}">
+                    <div class="filters">
+                        <div class="filter-item">
+                            <label for="status" class="form-label">Statut</label>
+                            <select class="form-select" id="status" name="status">
+                                <option value="">Tous</option>
+                                <option value="new" {% if request.GET.status == 'new' %}selected{% endif %}>Nouveaux</option>
+                                <option value="responded" {% if request.GET.status == 'responded' %}selected{% endif %}>Répondus</option>
+                            </select>
+                        </div>
+                        <div class="filter-item">
+                            <label for="date_from" class="form-label">Date de début</label>
+                            <input type="date" class="form-control" id="date_from" name="date_from" value="{{ request.GET.date_from }}">
+                        </div>
+                        <div class="filter-item">
+                            <label for="date_to" class="form-label">Date de fin</label>
+                            <input type="date" class="form-control" id="date_to" name="date_to" value="{{ request.GET.date_to }}">
+                        </div>
+                        <div class="filter-item">
+                            <label for="search" class="form-label">Recherche</label>
+                            <input type="text" class="form-control" id="search" name="search" placeholder="Nom, email, sujet..." value="{{ request.GET.search }}">
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end mt-3">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i> Filtrer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Liste des messages -->
+        <div class="card">
+            <div class="card-header">
+                <h2>Messages ({{ messages_list.count }})</h2>
+                <div>
+                    <button class="btn btn-danger" id="deleteSelectedMessages" disabled>
+                        <i class="fas fa-trash"></i> Supprimer sélectionnés
+                    </button>
+                    <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Retour au tableau de bord
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table" id="messagesTable">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <input type="checkbox" id="selectAllMessages" class="form-check-input">
+                                </th>
+                                <th>Expéditeur</th>
+                                <th>Email</th>
+                                <th>Sujet</th>
+                                <th>Date</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for message in messages_list %}
+                            <tr>
+                                <td>
+                                    <input type="checkbox" class="message-checkbox form-check-input" data-id="{{ message.id }}">
+                                </td>
+                                <td>{{ message.name }}</td>
+                                <td>{{ message.email }}</td>
+                                <td>
+                                    <div class="message-preview">{{ message.subject|default:"(Sans sujet)" }}</div>
+                                </td>
+                                <td>{{ message.created_at|date:"d/m/Y" }}</td>
+                                <td>
+                                    {% if message.status == 'new' %}
+                                        <span class="status new">Nouveau</span>
+                                    {% else %}
+                                        <span class="status responded">Répondu</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-sm btn-primary view-message" data-id="{{ message.id }}">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-success respond-message" data-id="{{ message.id }}">
+                                            <i class="fas fa-reply"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger delete-message" data-id="{{ message.id }}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center py-4">
+                                    <i class="fas fa-envelope fa-3x text-muted mb-3"></i>
+                                    <p>Aucun message trouvé</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                {% if messages_list.has_other_pages %}
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        {% if messages_list.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ messages_list.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                        
+                        {% for i in messages_list.paginator.page_range %}
+                            {% if messages_list.number == i %}
+                            <li class="page-item active"><a class="page-link" href="#">{{ i }}</a></li>
+                            {% else %}
+                            <li class="page-item"><a class="page-link" href="?page={{ i }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if messages_list.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ messages_list.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Voir Message -->
+    <div class="modal fade" id="viewMessageModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Détails du message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <strong>De:</strong> <span id="messageFrom"></span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Email:</strong> <span id="messageEmail"></span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Sujet:</strong> <span id="messageSubject"></span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Date:</strong> <span id="messageDate"></span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Message:</strong>
+                        <div class="p-3 bg-light rounded" id="messageContent"></div>
+                    </div>
+                    <div id="responseSection" class="d-none">
+                        <hr>
+                        <div class="mb-3">
+                            <strong>Réponse:</strong>
+                            <div class="p-3 bg-light rounded" id="responseContent"></div>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Répondu le:</strong> <span id="responseDate"></span>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Répondu par:</strong> <span id="responseBy"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                    <button type="button" class="btn btn-success" id="respondBtn">Répondre</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Répondre au Message -->
+    <div class="modal fade" id="respondMessageModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Répondre au message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="responseForm" method="post" action="{% url 'admin_message_respond' 0 %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="message_id" id="responseMessageId">
+                        <div class="mb-3">
+                            <label for="responseText" class="form-label">Votre réponse</label>
+                            <textarea class="form-control" id="responseText" name="response" rows="6" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" form="responseForm" class="btn btn-success">Envoyer la réponse</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Supprimer Message -->
+    <div class="modal fade" id="deleteMessageModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmer la suppression</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Êtes-vous sûr de vouloir supprimer ce message ?</p>
+                    <p class="text-danger">Cette action est irréversible.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <form id="deleteMessageForm" method="post" action="{% url 'admin_message_delete' 0 %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="message_id" id="deleteMessageId">
+                        <button type="submit" class="btn btn-danger">Supprimer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gestion des messages
+            const viewMessageBtns = document.querySelectorAll('.view-message');
+            const respondMessageBtns = document.querySelectorAll('.respond-message');
+            const deleteMessageBtns = document.querySelectorAll('.delete-message');
+            const viewMessageModal = new bootstrap.Modal(document.getElementById('viewMessageModal'));
+            const respondMessageModal = new bootstrap.Modal(document.getElementById('respondMessageModal'));
+            const deleteMessageModal = new bootstrap.Modal(document.getElementById('deleteMessageModal'));
+            
+            viewMessageBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const messageId = this.getAttribute('data-id');
+                    
+                    // Charger les détails du message via AJAX
+                    fetch(`/admin/api/message/${messageId}/`)
+                        .then(response => response.json())
+                        .then(data => {
+                            document.getElementById('messageFrom').textContent = data.name;
+                            document.getElementById('messageEmail').textContent = data.email;
+                            document.getElementById('messageSubject').textContent = data.subject || '(Sans sujet)';
+                            document.getElementById('messageDate').textContent = data.created_at;
+                            document.getElementById('messageContent').textContent = data.message;
+                            
+                            // Configurer le bouton de réponse
+                            const respondBtn = document.getElementById('respondBtn');
+                            respondBtn.setAttribute('data-id', messageId);
+                            
+                            // Afficher la réponse si elle existe
+                            const responseSection = document.getElementById('responseSection');
+                            if (data.response) {
+                                document.getElementById('responseContent').textContent = data.response;
+                                document.getElementById('responseDate').textContent = data.responded_at;
+                                document.getElementById('responseBy').textContent = data.responded_by || 'Administrateur';
+                                responseSection.classList.remove('d-none');
+                                respondBtn.classList.add('d-none');
+                            } else {
+                                responseSection.classList.add('d-none');
+                                respondBtn.classList.remove('d-none');
+                            }
+                            
+                            viewMessageModal.show();
+                        });
+                });
+            });
+            
+            // Bouton pour ouvrir le modal de réponse
+            document.getElementById('respondBtn').addEventListener('click', function() {
+                const messageId = this.getAttribute('data-id');
+                document.getElementById('responseMessageId').value = messageId;
+                
+                // Mettre à jour l'action du formulaire
+                const form = document.getElementById('responseForm');
+                form.action = form.action.replace(/\/0\/$/, `/${messageId}/`);
+                
+                viewMessageModal.hide();
+                respondMessageModal.show();
+            });
+            
+            respondMessageBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const messageId = this.getAttribute('data-id');
+                    document.getElementById('responseMessageId').value = messageId;
+                    
+                    // Mettre à jour l'action du formulaire
+                    const form = document.getElementById('responseForm');
+                    form.action = form.action.replace(/\/0\/$/, `/${messageId}/`);
+                    
+                    respondMessageModal.show();
+                });
+            });
+            
+            deleteMessageBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const messageId = this.getAttribute('data-id');
+                    document.getElementById('deleteMessageId').value = messageId;
+                    
+                    // Mettre à jour l'action du formulaire
+                    const form = document.getElementById('deleteMessageForm');
+                    form.action = form.action.replace(/\/0\/$/, `/${messageId}/`);
+                    
+                    deleteMessageModal.show();
+                });
+            });
+            
+            // Gestion des cases à cocher pour les messages
+            const selectAllMessages = document.getElementById('selectAllMessages');
+            const messageCheckboxes = document.querySelectorAll('.message-checkbox');
+            const deleteSelectedMessagesBtn = document.getElementById('deleteSelectedMessages');
+            
+            if (selectAllMessages) {
+                selectAllMessages.addEventListener('change', function() {
+                    const isChecked = this.checked;
+                    messageCheckboxes.forEach(checkbox => {
+                        checkbox.checked = isChecked;
+                    });
+                    updateDeleteButtonState();
+                });
+            }
+            
+            messageCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', updateDeleteButtonState);
+            });
+            
+            function updateDeleteButtonState() {
+                const checkedCount = document.querySelectorAll('.message-checkbox:checked').length;
+                deleteSelectedMessagesBtn.disabled = checkedCount === 0;
+            }
+            
+            // Suppression groupée des messages
+            if (deleteSelectedMessagesBtn) {
+                deleteSelectedMessagesBtn.addEventListener('click', function() {
+                    
+                    if (confirm('Êtes-vous sûr de vouloir supprimer les messages sélectionnés ?')) {
+                        const selectedIds = Array.from(document.querySelectorAll('.message-checkbox:checked'))
+                            .map(checkbox => checkbox.getAttribute('data-id'));
+                        
+                        // Envoyer la requête de suppression
+                        fetch('/admin/messages/delete-multiple/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                            },
+                            body: JSON.stringify({ message_ids: selectedIds })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Recharger la page pour voir les changements
+                                window.location.reload();
+                            } else {
+                                alert('Erreur lors de la suppression des messages.');
+                            }
+                        });
+                    }
+                });
+            }
+            
+            // Réinitialiser les filtres
+            const resetFiltersBtn = document.getElementById('resetFilters');
+            if (resetFiltersBtn) {
+                resetFiltersBtn.addEventListener('click', function() {
+                    window.location.href = "{% url 'admin_messages' %}";
+                });
+            }
+        });
+    </script>
+</body>
+</html>

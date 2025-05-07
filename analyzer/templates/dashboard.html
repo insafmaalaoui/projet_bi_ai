@@ -1,0 +1,934 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Tableau de bord - MARKETMIND{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Variables - Inspirées par les couleurs du logo MARKETMIND */
+    :root {
+        --primary-color: #7AAEB5;
+        --secondary-color: #9ECBD1;
+        --accent-color: #5D8A91;
+        --dark-color: #334155;
+        --light-color: #F8FAFC;
+        --gray-color: #64748B;
+        --border-color: #E2E8F0;
+        
+        --primary-gradient: linear-gradient(135deg, #7AAEB5, #9ECBD1);
+        --secondary-gradient: linear-gradient(135deg, #F0F4FD, #E0F2F4);
+        --card-shadow: 0 10px 30px rgba(122, 174, 181, 0.15);
+        --hover_shadow: 0 15px 35px rgba(122, 174, 181, 0.25);
+        --transition_slow: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        --transition_medium: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        --transition_fast: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeInRight {
+        from {
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes fadeInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    @keyframes float {
+        0% {
+            transform: translateY(0px);
+        }
+        50% {
+            transform: translateY(-10px);
+        }
+        100% {
+            transform: translateY(0px);
+        }
+    }
+
+    /* Welcome Banner */
+    .welcome-banner {
+        background: var(--secondary-gradient);
+        border-radius: 20px;
+        padding: 2.5rem;
+        margin-bottom: 2.5rem;
+        margin-top: 5rem;
+        box-shadow: var(--card-shadow);
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        animation: fadeInUp 1s ease-out;
+    }
+
+    .welcome-banner::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%237AAEB5' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+        opacity: 0.5;
+    }
+
+    .welcome-content {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    @media (min-width: 768px) {
+        .welcome-content {
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+    }
+
+    .welcome-title {
+        font-size: 2.25rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+        background: linear-gradient(to right, var(--accent-color), var(--primary-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-fill-color: transparent;
+    }
+
+    .welcome-text {
+        color: var(--gray-color);
+        font-weight: 400;
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.85rem 1.75rem;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: var(--transition_medium);
+        cursor: pointer;
+        border: none;
+        font-size: 1rem;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+    }
+
+    .btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateX(-100%);
+        transition: var(--transition_medium);
+        z-index: -1;
+    }
+
+    .btn:hover::before {
+        transform: translateX(0);
+    }
+
+    .btn-primary {
+        background: var(--primary-gradient);
+        color: white;
+        box-shadow: 0 4px 15px rgba(122, 174, 181, 0.3);
+    }
+
+    .btn-primary:hover {
+        box-shadow: 0 8px 25px rgba(122, 174, 181, 0.4);
+        transform: translateY(-3px);
+    }
+
+    .btn-primary a {
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn i {
+        margin-right: 10px;
+        font-size: 1.1rem;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
+
+    @media (min-width: 640px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .stats-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+
+    .stat-card {
+        background-color: white;
+        border-radius: 20px;
+        padding: 1.75rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        box-shadow: var(--card-shadow);
+        transition: var(--transition_medium);
+        border: 1px solid rgba(226, 232, 240, 0.5);
+        animation: fadeInUp 1s ease-out;
+    }
+
+    .stat-card:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .stat-card:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+
+    .stat-card:nth-child(4) {
+        animation-delay: 0.6s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--hover_shadow);
+        border-color: rgba(122, 174, 181, 0.2);
+    }
+
+    .stat-icon {
+        width: 3.5rem;
+        height: 3.5rem;
+        border-radius: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.25rem;
+        font-size: 1.5rem;
+        transition: var(--transition_medium);
+    }
+
+    .stat-card:hover .stat-icon {
+        transform: scale(1.1);
+    }
+
+    .stat-icon-primary {
+        background-color: rgba(122, 174, 181, 0.1);
+        color: var(--primary-color);
+    }
+
+    .stat-icon-secondary {
+        background-color: rgba(158, 203, 209, 0.1);
+        color: var(--secondary-color);
+    }
+
+    .stat-icon-accent {
+        background-color: rgba(93, 138, 145, 0.1);
+        color: var(--accent-color);
+    }
+
+    .stat-value {
+        font-size: 2.25rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(to right, var(--accent-color), var(--primary-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-fill-color: transparent;
+    }
+
+    .stat-label {
+        font-size: 1rem;
+        color: var(--gray-color);
+        font-weight: 500;
+    }
+
+    /* Dashboard Grid */
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.75rem;
+        margin-bottom: 2.5rem;
+    }
+
+    @media (min-width: 1024px) {
+        .dashboard-grid {
+            grid-template-columns: 5fr 3fr;
+        }
+    }
+
+    .card {
+        background-color: white;
+        border-radius: 20px;
+        box-shadow: var(--card-shadow);
+        overflow: hidden;
+        border: 1px solid rgba(226, 232, 240, 0.5);
+        transition: var(--transition_medium);
+        animation: fadeInUp 1s ease-out;
+    }
+
+    .card:hover {
+        box-shadow: var(--hover_shadow);
+        border-color: rgba(122, 174, 181, 0.2);
+    }
+
+    .card-header {
+        padding: 1.25rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 600;
+        border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+    }
+
+    .card-header h3 {
+        font-size: 1.1rem;
+        letter-spacing: -0.3px;
+        color: var(--primary-color);
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    .card-body-no-padding {
+        padding: 0;
+    }
+
+    .card-footer {
+        padding: 1rem;
+        text-align: center;
+        background-color: #f8fafc;
+        border-top: 1px solid rgba(226, 232, 240, 0.8);
+    }
+
+    .card-footer a {
+        color: var(--primary-color);
+        font-size: 0.95rem;
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+
+    .card-footer a:hover {
+        color: var(--accent-color);
+    }
+
+    /* Activity Items */
+    .activity-item {
+        display: flex;
+        align-items: center;
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+        transition: background-color 0.3s;
+    }
+
+    .activity-item:hover {
+        background-color: #f8fafc;
+    }
+
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+
+    .activity-icon {
+        width: 2.75rem;
+        height: 2.75rem;
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1.25rem;
+        transition: var(--transition_medium);
+    }
+
+    .activity-item:hover .activity-icon {
+        transform: scale(1.1);
+    }
+
+    .activity-icon-primary {
+        background-color: rgba(122, 174, 181, 0.1);
+        color: var(--primary-color);
+    }
+
+    .activity-icon-secondary {
+        background-color: rgba(158, 203, 209, 0.1);
+        color: var(--secondary-color);
+    }
+
+    .activity-icon-accent {
+        background-color: rgba(93, 138, 145, 0.1);
+        color: var(--accent-color);
+    }
+
+    .activity-content h4 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+        color: var(--dark-color);
+    }
+
+    .activity-content p {
+        font-size: 0.85rem;
+        color: var(--gray-color);
+    }
+
+    /* Prediction Items */
+    .prediction-item {
+        display: block;
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+        transition: background-color 0.3s;
+    }
+
+    .prediction-item:last-child {
+        border-bottom: none;
+    }
+
+    .prediction-item:hover {
+        background-color: #f8fafc;
+    }
+
+    .prediction-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .prediction-title {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--dark-color);
+    }
+
+    .badge {
+        padding: 0.35rem 0.75rem;
+        border-radius: 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .badge-success {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+
+    .badge-warning {
+        background-color: rgba(217, 119, 6, 0.1);
+        color: #d97706;
+    }
+
+    .badge-danger {
+        background-color: rgba(220, 38, 38, 0.1);
+        color: #dc2626;
+    }
+
+    .prediction-channel {
+        font-size: 0.85rem;
+        color: var(--gray-color);
+    }
+
+    /* Charts */
+    .chart-container {
+        height: 300px;
+        position: relative;
+    }
+
+    /* Bottom Grid */
+    .bottom-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.75rem;
+        margin-top: 1.75rem;
+    }
+
+    @media (min-width: 1024px) {
+        .bottom-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    /* Dropdown */
+    .dropdown {
+        position: relative;
+    }
+
+    .dropdown-toggle {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        font-size: 0.9rem;
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.5rem;
+        background-color: white;
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        color: var(--gray-color);
+        transition: all 0.3s;
+    }
+
+    .dropdown-toggle:hover {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+    }
+
+    .dropdown-toggle i {
+        margin-left: 0.5rem;
+        font-size: 0.75rem;
+    }
+
+    /* Animation Classes */
+    .animate-fadeInUp {
+        animation: fadeInUp 1s ease-out;
+    }
+
+    .animate-fadeInRight {
+        animation: fadeInRight 1s ease-out;
+    }
+
+    .animate-fadeInLeft {
+        animation: fadeInLeft 1s ease-out;
+    }
+
+    .animate-pulse {
+        animation: pulse 3s infinite;
+    }
+
+    .animate-float {
+        animation: float 6s ease-in-out infinite;
+    }
+
+    /* Shimmer effect for buttons */
+    .btn-shimmer {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-shimmer::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.3) 50%,
+            rgba(255, 255, 255, 0) 100%
+        );
+        background-size: 200% 100%;
+        animation: shimmer 2s infinite;
+        transform: skewX(-20deg);
+    }
+
+    @keyframes shimmer {
+        0% {
+            background-position: -1000px 0;
+        }
+        100% {
+            background-position: 1000px 0;
+        }
+    }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<!-- Main Content -->
+<div class="main-content">
+    <div class="container">
+        <!-- Welcome Banner -->
+        <div class="welcome-banner">
+            <div class="welcome-content">
+                <div>
+                    <h2 class="welcome-title">Bienvenue, {{ user.username|default:"Utilisateur" }}!</h2>
+                    <p class="welcome-text">Voici votre tableau de bord personnalisé pour suivre et analyser vos campagnes marketing.</p>
+                </div>
+                <div>
+                    <button class="btn btn-primary btn-shimmer">
+                        <i class="fas fa-chart-line"></i>
+                        <a href="{% url 'predict' %}">Nouvelle Prédiction</a>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon stat-icon-primary">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="stat-value">5</div>
+                <div class="stat-label">Prédictions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon stat-icon-secondary">
+                    <i class="fas fa-bullseye"></i>
+                </div>
+                <div class="stat-value">4.2</div>
+                <div class="stat-label">ROI moyen</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon stat-icon-accent">
+                    <i class="fas fa-tags"></i>
+                </div>
+                <div class="stat-value">3</div>
+                <div class="stat-label">Campagnes</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon stat-icon-primary">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-value">85%</div>
+                <div class="stat-label">Précision</div>
+            </div>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Performance Chart -->
+            <div class="card animate-fadeInRight">
+                <div class="card-header">
+                    <h3>Performance des campagnes</h3>
+                    <div class="dropdown">
+                        <button class="dropdown-toggle">
+                            Ce mois
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="card animate-fadeInLeft">
+                <div class="card-header">
+                    <h3>Activité récente</h3>
+                </div>
+                <div class="card-body card-body-no-padding">
+                    <div class="activity-item">
+                        <div class="activity-icon activity-icon-primary">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h4>Prédiction effectuée</h4>
+                            <p>Il y a 2 heures</p>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon activity-icon-secondary">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h4>Campagne Email terminée</h4>
+                            <p>Hier à 14:30</p>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon activity-icon-accent">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h4>Nouvelle campagne créée</h4>
+                            <p>Il y a 3 jours</p>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon activity-icon-primary">
+                            <i class="fas fa-user-edit"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h4>Profil mis à jour</h4>
+                            <p>Il y a 5 jours</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="#">Voir toutes les activités</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Grid -->
+        <div class="bottom-grid">
+            <!-- Campaign Distribution -->
+            <div class="card animate-fadeInUp" style="animation-delay: 0.2s">
+                <div class="card-header">
+                    <h3>Distribution des campagnes</h3>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="campaignDistribution"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Channel Performance -->
+            <div class="card animate-fadeInUp" style="animation-delay: 0.4s">
+                <div class="card-header">
+                    <h3>Performance des canaux</h3>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="channelPerformance"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Predictions -->
+            <div class="card animate-fadeInUp" style="animation-delay: 0.6s">
+                <div class="card-header">
+                    <h3>Prédictions récentes</h3>
+                </div>
+                <div class="card-body card-body-no-padding">
+                    <a href="#" class="prediction-item">
+                        <div class="prediction-header">
+                            <h4 class="prediction-title">Campagne Email</h4>
+                            <span class="badge badge-success">ROI: 4.8</span>
+                        </div>
+                        <p class="prediction-channel">Canal: Email Marketing</p>
+                    </a>
+                    <a href="#" class="prediction-item">
+                        <div class="prediction-header">
+                            <h4 class="prediction-title">Campagne Social Media</h4>
+                            <span class="badge badge-warning">ROI: 3.2</span>
+                        </div>
+                        <p class="prediction-channel">Canal: Facebook</p>
+                    </a>
+                    <a href="#" class="prediction-item">
+                        <div class="prediction-header">
+                            <h4 class="prediction-title">Campagne PPC</h4>
+                            <span class="badge badge-danger">ROI: 1.5</span>
+                        </div>
+                        <p class="prediction-channel">Canal: Google Ads</p>
+                    </a>
+                    <a href="#" class="prediction-item">
+                        <div class="prediction-header">
+                            <h4 class="prediction-title">Campagne Content</h4>
+                            <span class="badge badge-success">ROI: 5.1</span>
+                        </div>
+                        <p class="prediction-channel">Canal: Blog</p>
+                    </a>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'predict' %}">Nouvelle prédiction</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Performance Chart
+        const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+        const performanceChart = new Chart(performanceCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'],
+                datasets: [{
+                    label: 'ROI',
+                    data: [3.2, 2.8, 3.5, 4.1, 3.9, 4.5, 4.8, 4.2, 3.8, 4.0, 4.3, 4.7],
+                    borderColor: '#7AAEB5',
+                    backgroundColor: 'rgba(122, 174, 181, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            drawBorder: false
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Campaign Distribution Chart
+        const campaignCtx = document.getElementById('campaignDistribution').getContext('2d');
+        const campaignChart = new Chart(campaignCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Email', 'Social Media', 'PPC', 'Content', 'Affiliate'],
+                datasets: [{
+                    data: [35, 25, 20, 15, 5],
+                    backgroundColor: [
+                        '#7AAEB5',
+                        '#9ECBD1',
+                        '#5D8A91',
+                        '#10b981',
+                        '#e11d48'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 12,
+                            font: {
+                                size: 11
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Channel Performance Chart
+        const channelCtx = document.getElementById('channelPerformance').getContext('2d');
+        const channelChart = new Chart(channelCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Email', 'Facebook', 'Instagram', 'Google', 'LinkedIn'],
+                datasets: [{
+                    label: 'ROI moyen',
+                    data: [4.8, 3.2, 2.9, 3.7, 4.1],
+                    backgroundColor: [
+                        'rgba(122, 174, 181, 0.7)',
+                        'rgba(158, 203, 209, 0.7)',
+                        'rgba(93, 138, 145, 0.7)',
+                        'rgba(16, 185, 129, 0.7)',
+                        'rgba(225, 29, 72, 0.7)'
+                    ],
+                    borderWidth: 0,
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            drawBorder: false
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+
+        // Animation on scroll
+        const animateElements = document.querySelectorAll('.animate-fadeInUp, .animate-fadeInRight, .animate-fadeInLeft');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+        
+        animateElements.forEach(element => {
+            element.style.opacity = '0';
+            element.style.transform = 'translateY(20px)';
+            element.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+            observer.observe(element);
+        });
+
+        // Hover effects for cards
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    });
+</script>
+{% endblock %}

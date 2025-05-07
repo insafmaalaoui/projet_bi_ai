@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MARKETMIND{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts - Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS principal -->
+    <style>
+        :root {
+            --primary-color: #7AAEB5;
+            --secondary-color: #9ECBD1;
+            --accent-color: #5D8A91;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --info-color: #3b82f6;
+            --light-color: #f8fafc;
+            --dark-color: #334155;
+            --gray-color: #64748b;
+            --border-color: #e2e8f0;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #f8fafc;
+            color: #334155;
+        }
+        
+        main {
+            flex: 1;
+        }
+        
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: color 0.3s;
+        }
+        
+        a:hover {
+            color: var(--primary-color);
+        }
+        
+        /* Navbar */
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 0.75rem 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        
+        .navbar-logo {
+            height: 68px;
+            width: auto;
+            vertical-align: middle;
+            transition: transform 0.3s ease;
+        }
+
+        .navbar-brand:hover .navbar-logo {
+            transform: scale(1.05);
+        }
+        
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .navbar-brand span {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-left: 0.5rem;
+        }
+        
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+        
+        .navbar-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .navbar-link {
+            color: var(--dark-color);
+            font-weight: 500;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+        
+        .navbar-link.active, .navbar-link:hover {
+            color: #e1cecc;
+        }
+        
+        .navbar-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #e1cecc;
+        }
+        
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .user-dropdown {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.3s;
+        }
+        
+        .user-dropdown:hover {
+            background-color: #f1f5f9;
+        }
+        
+        .user-dropdown i.fa-user-circle {
+            font-size: 1.25rem;
+            margin-right: 0.5rem;
+            color: var(--primary-color);
+        }
+        
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 0.5rem 0;
+            min-width: 200px;
+            z-index: 1000;
+            display: none;
+            border: 1px solid var(--border-color);
+        }
+        
+        .dropdown-menu.active {
+            display: block;
+        }
+        
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: var(--dark-color);
+            transition: background-color 0.3s;
+        }
+        
+        .dropdown-item:hover {
+            background-color: #f1f5f9;
+        }
+        
+        .dropdown-item i {
+            margin-right: 0.75rem;
+            width: 1rem;
+            color: var(--gray-color);
+        }
+        
+        .dropdown-divider {
+            height: 1px;
+            background-color: var(--border-color);
+            margin: 0.5rem 0;
+        }
+        
+        /* Footer */
+        .footer {
+            background-color: #f0f4fd;
+            color: var(--dark-color);
+            padding: 3.5rem 0 1.5rem;
+            margin-top: 3.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2.5rem;
+            margin-bottom: 2.5rem;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        .footer-title {
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            font-size: 1.1rem;
+            color: var(--dark-color);
+        }
+        
+        .footer-text {
+            color: var(--gray-color);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+        
+        .footer-links a {
+            color: var(--gray-color);
+            transition: color 0.3s;
+            font-size: 0.95rem;
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .footer-contact {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .footer-contact li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            color: var(--gray-color);
+            font-size: 0.95rem;
+        }
+        
+        .footer-contact i {
+            margin-right: 0.75rem;
+            width: 1rem;
+            color: var(--primary-color);
+        }
+        
+        .footer-divider {
+            height: 1px;
+            background-color: var(--border-color);
+            margin: 2rem 0;
+        }
+        
+        .footer-bottom {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-bottom {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
+        
+        .footer-copyright {
+            font-size: 0.95rem;
+            color: var(--gray-color);
+            margin-bottom: 1.5rem;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-copyright {
+                margin-bottom: 0;
+            }
+        }
+        
+        .footer-social {
+            display: flex;
+            gap: 1.25rem;
+        }
+        
+        .footer-social a {
+            color: var(--gray-color);
+            transition: all 0.3s;
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+            border: 1px solid var(--border-color);
+        }
+        
+        .footer-social a:hover {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+        
+        /* Cards */
+        .card {
+            background-color: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-header {
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+            background-color: white;
+        }
+        
+        .card-header h2, .card-header h3 {
+            font-size: 1.1rem;
+            letter-spacing: -0.3px;
+            margin-bottom: 0;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+            font-size: 0.95rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #7AAEB5, #9ECBD1);
+            color: white;
+            box-shadow: 0 4px 12px rgba(122, 174, 181, 0.2);
+        }
+        
+        .btn-primary:hover {
+            box-shadow: 0 6px 15px rgba(122, 174, 181, 0.3);
+            transform: translateY(-2px);
+            color: white;
+        }
+        
+        .btn i {
+            margin-right: 0.75rem;
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .navbar-links {
+                display: none;
+            }
+            
+            .navbar-mobile-toggle {
+                display: block;
+                font-size: 1.25rem;
+                cursor: pointer;
+                color: var(--primary-color);
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .navbar-mobile-toggle {
+                display: none;
+            }
+        }
+        
+        /* Messages d'alerte */
+        .alert {
+            border-radius: 0.75rem;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+            border: none;
+        }
+        
+        .alert-success {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        
+        .alert-danger {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+        
+        .alert-warning {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        
+        .alert-info {
+            background-color: #e0e7ff;
+            color: #3730a3;
+        }
+        
+        /* Page header */
+        .page-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .page-header h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-header p {
+            color: var(--gray-color);
+            margin-bottom: 0;
+        }
+        
+        /* Badges */
+        .badge {
+            padding: 0.35rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .badge-success {
+            background-color: #d1fae5;
+            color: #059669;
+        }
+        
+        .badge-warning {
+            background-color: #fef3c7;
+            color: #d97706;
+        }
+        
+        .badge-danger {
+            background-color: #fee2e2;
+            color: #dc2626;
+        }
+        
+        .badge-info {
+            background-color: #e0e7ff;
+            color: #4f46e5;
+        }
+        
+        /* Espaces supplémentaires pour le contenu */
+        .content-wrapper {
+            padding: 2rem 0;
+        }
+
+        /* Contenu principal avec padding pour la navbar fixe */
+        main.content-wrapper {
+            padding-top: 80px; /* Ajustez cette valeur selon la hauteur de votre navbar */
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <div class="navbar-content">
+                <a href="{% url 'index' %}" class="navbar-brand">
+                    <img src="{% static 'images/logo.png' %}" alt="MARKETMIND" class="navbar-logo">
+                </a>
+                
+                <div class="navbar-mobile-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+                
+                <div class="navbar-links">
+                    <a href="{% url 'index' %}" class="navbar-link {% if request.path == '/' %}active{% endif %}">Accueil</a>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'predict' %}" class="navbar-link {% if 'predict' in request.path %}active{% endif %}">Prédiction</a>
+                    {% endif %}
+                    <a href="/#features" class="navbar-link">Fonctionnalités</a>
+                    <a href="/#about" class="navbar-link">À propos</a>
+                    <a href="/#services" class="navbar-link">Services</a>
+                    <a href="/#contact" class="navbar-link">Contact</a>
+                </div>
+                
+                <div class="navbar-right">
+                    {% if user.is_authenticated %}
+                        <div class="user-dropdown" id="userDropdown">
+                            <i class="fas fa-user-circle"></i>
+                            <span>{{ user.username }}</span>
+                            <i class="fas fa-chevron-down" style="font-size: 0.75rem; margin-left: 0.5rem;"></i>
+                            
+                            <!-- Menu déroulant -->
+                            <div class="dropdown-menu" id="userDropdownMenu">
+                                <a href="{% url 'profile' %}" class="dropdown-item">
+                                    <i class="fas fa-user"></i>
+                                    <span>Mon profil</span>
+                                </a>
+                                {% if user.is_staff %}
+                                    <a href="{% url 'admin_dashboard' %}" class="dropdown-item">
+                                        <i class="fas fa-tachometer-alt"></i>
+                                        <span>Administration</span>
+                                    </a>
+                                {% endif %}
+                                <a href="{% url 'user_messages' %}" class="dropdown-item">
+                                    <i class="fas fa-envelope"></i>
+                                    <span>Mes messages</span>
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a href="{% url 'logout' %}" class="dropdown-item">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    <span>Déconnexion</span>
+                                </a>
+                            </div>
+                        </div>
+                        <a href="{% url 'dashboard' %}" class="btn btn-primary">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-outline">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>Connexion</span>
+                        </a>
+                        <a href="{% url 'register' %}" class="btn btn-primary">
+                            <i class="fas fa-user-plus"></i>
+                            <span>S'inscrire</span>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Messages de notification -->
+    {% if messages %}
+        <div class="container mt-4">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Contenu principal -->
+    <main class="content-wrapper">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <h5 class="footer-title">À propos</h5>
+                    <p class="footer-text">MARKETMIND est une plateforme d'analyse prédictive pour optimiser vos campagnes marketing.</p>
+                </div>
+                <div>
+                    <h5 class="footer-title">Liens rapides</h5>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'index' %}">Accueil</a></li>
+                        {% if user.is_authenticated %}
+                            <li><a href="{% url 'predict' %}">Prédiction</a></li>
+                            <li><a href="{% url 'user_messages' %}">Mes messages</a></li>
+                            <li><a href="{% url 'profile' %}">Mon profil</a></li>
+                        {% else %}
+                            <li><a href="{% url 'login' %}">Connexion</a></li>
+                            <li><a href="{% url 'register' %}">Inscription</a></li>
+                        {% endif %}
+                        <li><a href="/#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="footer-title">Contact</h5>
+                    <ul class="footer-contact">
+                        <li>
+                            <i class="fas fa-envelope"></i>
+                            contact@marketmind.com
+                        </li>
+                        <li>
+                            <i class="fas fa-phone"></i>
+                            +216 72 580 655
+                        </li>
+                        <li>
+                            <i class="fas fa-map-marker-alt"></i>
+                            123 Rue de l'Analyse, Paris
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-divider"></div>
+
+            <div class="footer-bottom">
+                <p class="footer-copyright">&copy; {% now "Y" %} MARKETMIND. Tous droits réservés.</p>
+                <div class="footer-social">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Scripts personnalisés -->
+    <script>
+        // User Dropdown Toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const userDropdown = document.getElementById('userDropdown');
+            const userDropdownMenu = document.getElementById('userDropdownMenu');
+            
+            if (userDropdown && userDropdownMenu) {
+                userDropdown.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    userDropdownMenu.classList.toggle('active');
+                });
+                
+                // Fermer le dropdown quand on clique ailleurs
+                document.addEventListener('click', function() {
+                    userDropdownMenu.classList.remove('active');
+                });
+            }
+            
+            // Mobile menu toggle
+            const navbarMobileToggle = document.querySelector('.navbar-mobile-toggle');
+            const navbarLinks = document.querySelector('.navbar-links');
+            
+            if (navbarMobileToggle && navbarLinks) {
+                navbarMobileToggle.addEventListener('click', function() {
+                    navbarLinks.style.display = navbarLinks.style.display === 'flex' ? 'none' : 'flex';
+                });
+            }
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

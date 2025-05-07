@@ -1,0 +1,1482 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}MARKETMIND - Analyse et Prédiction des Performances Marketing{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Variables - Inspirées par les couleurs du logo MARKETMIND */
+    :root {
+        --primary-color: #7AAEB5;
+        --secondary-color: #9ECBD1;
+        --accent-color: #5D8A91;
+        --dark-color: #334155;
+        --light-color: #F8FAFC;
+        --gray-color: #64748B;
+        --border-color: #E2E8F0;
+        
+        --primary-gradient: linear-gradient(135deg, #7AAEB5, #9ECBD1);
+        --secondary-gradient: linear-gradient(135deg, #F0F4FD, #E0F2F4);
+        --card-shadow: 0 10px 30px rgba(122, 174, 181, 0.15);
+        --hover-shadow: 0 15px 35px rgba(122, 174, 181, 0.25);
+        --transition-slow: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        --transition-medium: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        --transition-fast: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeInRight {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes fadeInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    @keyframes float {
+        0% {
+            transform: translateY(0px);
+        }
+        50% {
+            transform: translateY(-10px);
+        }
+        100% {
+            transform: translateY(0px);
+        }
+    }
+
+    @keyframes arrowUpDown {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-8px);
+        }
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Hero Section */
+    .hero {
+        position: relative;
+        padding: 120px 0 100px;
+        overflow: hidden;
+        background: var(--secondary-gradient);
+    }
+
+    .hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%237AAEB5' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+        opacity: 0.5;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 1;
+        animation: fadeInRight 1s ease-out;
+    }
+
+    .hero-title {
+        font-size: 3.5rem;
+        font-weight: 800;
+        line-height: 1.2;
+        margin-bottom: 1.5rem;
+        color: var(--primary-color);
+    }
+
+    .hero-subtitle {
+        font-size: 1.25rem;
+        color: var(--gray-color);
+        margin-bottom: 2.5rem;
+        line-height: 1.6;
+        max-width: 90%;
+    }
+
+    .hero-image {
+        position: relative;
+        animation: fadeInLeft 1s ease-out;
+    }
+
+    .hero-image img {
+        width: 100%;
+        border-radius: 20px;
+        box-shadow: var(--card-shadow);
+        transition: var(--transition-medium);
+        animation: float 6s ease-in-out infinite;
+    }
+
+    .hero-image::before {
+        content: '';
+        position: absolute;
+        top: -15px;
+        right: -15px;
+        width: 100%;
+        height: 100%;
+        border-radius: 20px;
+        background: var(--primary-gradient);
+        z-index: -1;
+        opacity: 0.5;
+    }
+
+    .hero-image::after {
+        content: '';
+        position: absolute;
+        bottom: -15px;
+        left: -15px;
+        width: 100%;
+        height: 100%;
+        border-radius: 20px;
+        background: var(--primary-gradient);
+        z-index: -1;
+        opacity: 0.3;
+    }
+
+    .hero-buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .hero-stats {
+        display: flex;
+        gap: 3rem;
+        margin-top: 3rem;
+        flex-wrap: wrap;
+    }
+
+    .hero-stat {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .hero-stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+
+    .hero-stat-label {
+        font-size: 1rem;
+        color: var(--gray-color);
+    }
+
+    /* Logo centré */
+    .logo-container {
+        text-align: center;
+        margin-bottom: 4rem;
+        position: relative;
+    }
+
+    .logo-main {
+        max-width: 500px;
+        width: 100%;
+        height: auto;
+        filter: drop-shadow(0 8px 20px rgba(122, 174, 181, 0.4));
+        animation: fadeInDown 1s ease-out, pulse 6s infinite ease-in-out 1s;
+    }
+
+    .logo-asterisk {
+        position: absolute;
+        font-size: 2.5rem;
+        color: var(--primary-color);
+        opacity: 0.7;
+    }
+
+    .logo-asterisk-1 {
+        top: -10px;
+        left: 25%;
+        animation: pulse 4s infinite ease-in-out;
+    }
+
+    .logo-asterisk-2 {
+        bottom: 10px;
+        right: 25%;
+        animation: pulse 4s infinite ease-in-out 1s;
+    }
+
+    .logo-arrow-up {
+        position: absolute;
+        top: 50%;
+        left: 60%;
+        transform: translateY(-50%);
+        font-size: 2rem;
+        color: var(--accent-color);
+        animation: arrowUpDown 2s infinite ease-in-out;
+    }
+
+    .logo-arrow-down {
+        position: absolute;
+        top: 60%;
+        left: 60%;
+        transform: translateY(-50%);
+        font-size: 2rem;
+        color: var(--accent-color);
+        animation: arrowUpDown 2s infinite ease-in-out 1s;
+    }
+
+    .logo-tagline {
+        font-size: 1.25rem;
+        color: var(--gray-color);
+        margin-top: 1rem;
+        font-weight: 500;
+        letter-spacing: 1px;
+    }
+
+    /* Features Section */
+    .features {
+        padding: 120px 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .features::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 300px;
+        height: 300px;
+        background: var(--primary-gradient);
+        border-radius: 50%;
+        filter: blur(150px);
+        opacity: 0.1;
+        z-index: -1;
+    }
+
+    .section-title {
+        text-align: center;
+        margin-bottom: 80px;
+        position: relative;
+    }
+
+    .section-title h2 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        color: var(--primary-color);
+        display: inline-block;
+    }
+
+    .section-title p {
+        font-size: 1.25rem;
+        color: var(--gray-color);
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: var(--primary-gradient);
+        border-radius: 2px;
+    }
+
+    .feature-card {
+        background-color: white;
+        border-radius: 20px;
+        padding: 40px 30px;
+        box-shadow: var(--card-shadow);
+        height: 100%;
+        transition: var(--transition-medium);
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--hover-shadow);
+    }
+
+    .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: var(--primary-gradient);
+        z-index: -1;
+    }
+
+    .feature-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 25px;
+        font-size: 2rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .feature-icon::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 20px;
+        background: var(--primary-gradient);
+        opacity: 0.1;
+        z-index: -1;
+        transition: var(--transition-medium);
+    }
+
+    .feature-card:hover .feature-icon::before {
+        opacity: 0.2;
+        transform: scale(1.1);
+    }
+
+    .feature-icon i {
+        color: var(--primary-color);
+    }
+
+    .feature-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        color: var(--dark-color);
+    }
+
+    .feature-description {
+        color: var(--gray-color);
+        line-height: 1.7;
+        margin-bottom: 20px;
+    }
+
+    .feature-link {
+        display: inline-flex;
+        align-items: center;
+        color: var(--primary-color);
+        font-weight: 600;
+        transition: var(--transition-fast);
+    }
+
+    .feature-link i {
+        margin-left: 5px;
+        transition: var(--transition-fast);
+    }
+
+    .feature-link:hover {
+        color: var(--accent-color);
+    }
+
+    .feature-link:hover i {
+        transform: translateX(5px);
+    }
+
+    /* About Section */
+    .about {
+        padding: 120px 0;
+        background-color: #f8fafc;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .about::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 300px;
+        height: 300px;
+        background: var(--primary-gradient);
+        border-radius: 50%;
+        filter: blur(150px);
+        opacity: 0.1;
+        z-index: 0;
+    }
+
+    .about-image {
+        position: relative;
+        z-index: 1;
+    }
+
+    .about-image img {
+        width: 100%;
+        border-radius: 20px;
+        box-shadow: var(--card-shadow);
+        transition: var(--transition-medium);
+    }
+
+    .about-image::before {
+        content: '';
+        position: absolute;
+        top: -15px;
+        left: -15px;
+        width: 100%;
+        height: 100%;
+        border-radius: 20px;
+        background: var(--primary-gradient);
+        z-index: -1;
+        opacity: 0.3;
+    }
+
+    .about-content {
+        position: relative;
+        z-index: 1;
+        padding-left: 30px;
+    }
+
+    .about-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        color: var(--primary-color);
+        display: inline-block;
+    }
+
+    .about-description {
+        color: var(--gray-color);
+        margin-bottom: 1.5rem;
+        line-height: 1.8;
+        font-size: 1.1rem;
+    }
+
+    .about-stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
+        margin-top: 40px;
+    }
+
+    .stat-item {
+        text-align: center;
+        background-color: white;
+        padding: 25px 20px;
+        border-radius: 15px;
+        box-shadow: var(--card-shadow);
+        transition: var(--transition-medium);
+        min-width: 150px;
+    }
+
+    .stat-item:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--hover-shadow);
+    }
+
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        color: var(--gray-color);
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    /* Services Section */
+    .services {
+        padding: 120px 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .services::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        right: 0;
+        width: 300px;
+        height: 300px;
+        background: var(--primary-gradient);
+        border-radius: 50%;
+        filter: blur(150px);
+        opacity: 0.1;
+        z-index: -1;
+    }
+
+    .service-tabs {
+        background-color: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: var(--card-shadow);
+        transition: var(--transition-medium);
+    }
+
+    .service-tab {
+        padding: 25px;
+        cursor: pointer;
+        transition: var(--transition-medium);
+        border-bottom: 1px solid var(--border-color);
+        position: relative;
+    }
+
+    .service-tab:last-child {
+        border-bottom: none;
+    }
+
+    .service-tab.active {
+        background-color: #f8fafc;
+    }
+
+    .service-tab.active::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 5px;
+        height: 100%;
+        background: var(--primary-gradient);
+    }
+
+    .service-tab-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: var(--dark-color);
+        transition: var(--transition-medium);
+    }
+
+    .service-tab.active .service-tab-title {
+        color: var(--primary-color);
+    }
+
+    .service-tab-description {
+        font-size: 1rem;
+        color: var(--gray-color);
+        margin-bottom: 0;
+        transition: var(--transition-medium);
+    }
+
+    .service-content {
+        background-color: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: var(--card-shadow);
+        display: none;
+        height: 100%;
+        transition: var(--transition-medium);
+        animation: fadeInUp 0.5s ease-out;
+    }
+
+    .service-content.active {
+        display: block;
+    }
+
+    .service-image {
+        margin-bottom: 30px;
+        position: relative;
+    }
+
+    .service-image img {
+        width: 100%;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: var(--transition-medium);
+    }
+
+    .service-image:hover img {
+        transform: scale(1.02);
+    }
+
+    .service-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        color: var(--dark-color);
+    }
+
+    .service-description {
+        color: var(--gray-color);
+        line-height: 1.8;
+        font-size: 1.1rem;
+    }
+
+    .service-features {
+        margin-top: 30px;
+    }
+
+    .service-feature {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .service-feature i {
+        color: var(--primary-color);
+        margin-right: 15px;
+        font-size: 1.25rem;
+    }
+
+    .service-feature span {
+        color: var(--dark-color);
+        font-weight: 500;
+    }
+
+    /* Contact Section */
+    .contact {
+        padding: 120px 0;
+        background-color: #f8fafc;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .contact::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 300px;
+        height: 300px;
+        background: var(--primary-gradient);
+        border-radius: 50%;
+        filter: blur(150px);
+        opacity: 0.1;
+        z-index: 0;
+    }
+
+    .contact-form {
+        background-color: white;
+        border-radius: 20px;
+        padding: 50px;
+        box-shadow: var(--card-shadow);
+        position: relative;
+        z-index: 1;
+        transition: var(--transition-medium);
+    }
+
+    .contact-form:hover {
+        box-shadow: var(--hover-shadow);
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+        position: relative;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 15px 20px;
+        border-radius: 10px;
+        border: 2px solid var(--border-color);
+        background-color: #f8fafc;
+        font-size: 1rem;
+        transition: var(--transition-medium);
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 4px rgba(122, 174, 181, 0.1);
+    }
+
+    .form-control::placeholder {
+        color: #a0aec0;
+    }
+
+    textarea.form-control {
+        min-height: 150px;
+        resize: vertical;
+    }
+
+    .contact-info {
+        background-color: white;
+        border-radius: 20px;
+        padding: 50px;
+        box-shadow: var(--card-shadow);
+        height: 100%;
+        position: relative;
+        z-index: 1;
+        transition: var(--transition-medium);
+    }
+
+    .contact-info:hover {
+        box-shadow: var(--hover-shadow);
+    }
+
+    .contact-info-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 40px;
+        color: var(--dark-color);
+        position: relative;
+        display: inline-block;
+    }
+
+    .contact-info-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background: var(--primary-gradient);
+        border-radius: 2px;
+    }
+
+    .contact-info-item {
+        display: flex;
+        margin-bottom: 30px;
+        transition: var(--transition-medium);
+    }
+
+    .contact-info-item:hover {
+        transform: translateX(5px);
+    }
+
+    .contact-info-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 15px;
+        background: linear-gradient(135deg, rgba(122, 174, 181, 0.1), rgba(158, 203, 209, 0.1));
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-right: 20px;
+        flex-shrink: 0;
+        transition: var(--transition-medium);
+    }
+
+    .contact-info-item:hover .contact-info-icon {
+        background: var(--primary-gradient);
+        color: white;
+    }
+
+    .contact-info-item h4 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: var(--dark-color);
+    }
+
+    .contact-info-text {
+        color: var(--gray-color);
+        margin-bottom: 0;
+        font-size: 1.1rem;
+    }
+
+    .map-container {
+        margin-top: 40px;
+        border-radius: 15px;
+        overflow: hidden;
+        height: 250px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        position: relative;
+    }
+
+    .map-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--primary-gradient);
+        opacity: 0.05;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .map-container iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+
+    /* Button Styles */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.85rem 1.75rem;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: var(--transition-medium);
+        cursor: pointer;
+        border: none;
+        font-size: 1rem;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+    }
+
+    .btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateX(-100%);
+        transition: var(--transition-medium);
+        z-index: -1;
+    }
+
+    .btn:hover::before {
+        transform: translateX(0);
+    }
+
+    .btn-primary {
+        background: var(--primary-gradient);
+        color: white;
+        box-shadow: 0 4px 15px rgba(122, 174, 181, 0.3);
+    }
+
+    .btn-primary:hover {
+        box-shadow: 0 8px 25px rgba(122, 174, 181, 0.4);
+        transform: translateY(-3px);
+        color: white;
+    }
+
+    .btn-outline {
+        background: transparent;
+        border: 2px solid var(--primary-color);
+        color: var(--primary-color);
+    }
+
+    .btn-outline:hover {
+        background: rgba(122, 174, 181, 0.05);
+        transform: translateY(-3px);
+    }
+
+    .btn i {
+        margin-right: 10px;
+        font-size: 1.1rem;
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 1200px) {
+        .hero-title {
+            font-size: 3rem;
+        }
+        
+        .logo-main {
+            max-width: 400px;
+        }
+    }
+
+    @media (max-width: 992px) {
+        .hero {
+            padding: 100px 0 80px;
+        }
+        
+        .hero-title {
+            font-size: 2.5rem;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.1rem;
+        }
+        
+        .hero-image {
+            margin-top: 50px;
+        }
+        
+        .about-content {
+            padding-left: 0;
+            margin-top: 50px;
+        }
+        
+        .about-title, .section-title h2 {
+            font-size: 2.25rem;
+        }
+        
+        .features, .about, .services, .contact {
+            padding: 80px 0;
+        }
+        
+        .logo-main {
+            max-width: 350px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .hero {
+            padding: 80px 0 60px;
+        }
+        
+        .hero-title {
+            font-size: 2rem;
+        }
+        
+        .hero-subtitle {
+            font-size: 1rem;
+        }
+        
+        .hero-stats {
+            gap: 1.5rem;
+        }
+        
+        .hero-stat-value {
+            font-size: 2rem;
+        }
+        
+        .section-title {
+            margin-bottom: 60px;
+        }
+        
+        .section-title h2 {
+            font-size: 2rem;
+        }
+        
+        .section-title p {
+            font-size: 1.1rem;
+        }
+        
+        .feature-card, .contact-form, .contact-info {
+            padding: 30px;
+        }
+        
+        .service-content {
+            padding: 30px;
+        }
+        
+        .about-title, .service-title {
+            font-size: 2rem;
+        }
+        
+        .stat-item {
+            min-width: 120px;
+            padding: 20px 15px;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+        }
+        
+        .logo-main {
+            max-width: 300px;
+        }
+        
+        .logo-tagline {
+            font-size: 1rem;
+        }
+        
+        .logo-asterisk {
+            font-size: 2rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .hero-buttons {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .hero-buttons .btn {
+            width: 100%;
+        }
+        
+        .hero-stats {
+            justify-content: space-between;
+        }
+        
+        .hero-stat {
+            width: 45%;
+        }
+        
+        .hero-stat-value {
+            font-size: 1.75rem;
+        }
+        
+        .about-stats {
+            justify-content: space-between;
+        }
+        
+        .stat-item {
+            width: 45%;
+            min-width: auto;
+        }
+        
+        .stat-value {
+            font-size: 1.75rem;
+        }
+        
+        .logo-main {
+            max-width: 250px;
+        }
+        
+        .logo-asterisk {
+            font-size: 1.5rem;
+        }
+        
+      
+    }
+
+    /* Animation Classes */
+    .animate-fadeInUp {
+        animation: fadeInUp 1s ease-out;
+    }
+
+    .animate-fadeInRight {
+        animation: fadeInRight 1s ease-out;
+    }
+
+    .animate-fadeInLeft {
+        animation: fadeInLeft 1s ease-out;
+    }
+
+    .animate-pulse {
+        animation: pulse 3s infinite;
+    }
+
+    .animate-float {
+        animation: float 6s ease-in-out infinite;
+    }
+
+    /* Alert Styles */
+    .alert {
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        position: relative;
+    }
+
+    .alert-success {
+        background-color: #d1fae5;
+        color: #065f46;
+    }
+
+    .alert-close {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        cursor: pointer;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <!-- Logo centré et stylisé -->
+            <div class="row justify-content-center">
+                <div class="col-md-10 col-lg-8 text-center">
+                    <div class="logo-container">
+                      
+                        <img src="{% static 'images/logo.png' %}" alt="MARKETMIND Logo" class="logo-main">
+                       
+                        <div class="logo-tagline">Optimisez vos performances marketing avec l'intelligence artificielle</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contenu principal -->
+            <div class="row align-items-center">
+                <div class="col-lg-6 col-12">
+                    <div class="hero-content">
+                        <h1 class="hero-title">Prenez des décisions marketing éclairées</h1>
+                        <p class="hero-subtitle">Découvrez les canaux les plus performants et maximisez votre retour sur investissement grâce à notre plateforme d'analyse prédictive de pointe.</p>
+                        <div class="hero-buttons">
+                            <a href="{% url 'predict' %}" class="btn btn-primary">
+                                <i class="fas fa-chart-line"></i>
+                                Commencer l'analyse
+                            </a>
+                            <a href="#" class="btn btn-outline">
+                                <i class="fas fa-play"></i>
+                                Voir la démo
+                            </a>
+                        </div>
+                        <div class="hero-stats">
+                            <div class="hero-stat animate-fadeInUp">
+                                <div class="hero-stat-value">95%</div>
+                                <div class="hero-stat-label">Précision</div>
+                            </div>
+                            <div class="hero-stat animate-fadeInUp" style="animation-delay: 0.2s;">
+                                <div class="hero-stat-value">+40%</div>
+                                <div class="hero-stat-label">ROI moyen</div>
+                            </div>
+                            <div class="hero-stat animate-fadeInUp" style="animation-delay: 0.4s;">
+                                <div class="hero-stat-value">500+</div>
+                                <div class="hero-stat-label">Clients</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-12">
+                    <div class="hero-image">
+                        <img src="{% static 'images/slide/img.jpg' %}" alt="Marketing Analytics Dashboard">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Fonctionnalités principales</h2>
+                <p>Découvrez comment notre plateforme peut transformer votre approche marketing</p>
+            </div>
+            <div class="row">
+                <div class="col-lg-4 col-md-6 col-12 mb-4">
+                    <div class="feature-card animate-fadeInUp">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                        <h3 class="feature-title">Analyse des canaux</h3>
+                        <p class="feature-description">Identifiez les canaux marketing les plus efficaces pour votre entreprise grâce à des analyses approfondies et des visualisations interactives.</p>
+                        <a href="#" class="feature-link">En savoir plus <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-12 mb-4">
+                    <div class="feature-card animate-fadeInUp" style="animation-delay: 0.2s;">
+                        <div class="feature-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h3 class="feature-title">Prédictions IA</h3>
+                        <p class="feature-description">Anticipez les résultats de vos campagnes marketing avec nos modèles prédictifs basés sur l'intelligence artificielle de pointe.</p>
+                        <a href="#" class="feature-link">En savoir plus <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-12 mb-4">
+                    <div class="feature-card animate-fadeInUp" style="animation-delay: 0.4s;">
+                        <div class="feature-icon">
+                            <i class="fas fa-tachometer-alt"></i>
+                        </div>
+                        <h3 class="feature-title">Dashboard interactif</h3>
+                        <p class="feature-description">Visualisez vos données marketing en temps réel grâce à des tableaux de bord interactifs et personnalisables selon vos besoins.</p>
+                        <a href="#" class="feature-link">En savoir plus <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 col-12 mb-5 mb-lg-0">
+                    <div class="about-image animate-fadeInRight">
+                        <img src="{% static 'images/ai.png' %}" alt="AI Analytics">
+                    </div>
+                </div>
+                <div class="col-lg-6 col-12">
+                    <div class="about-content animate-fadeInLeft">
+                        <h2 class="about-title">À propos de MARKETMIND</h2>
+                        <p class="about-description">MARKETMIND est une plateforme innovante qui utilise l'analyse de données et l'intelligence artificielle pour vous aider à identifier les canaux marketing les plus performants. Notre mission est de vous fournir des insights précis pour maximiser l'efficacité de vos campagnes.</p>
+                        <p class="about-description">Grâce à nos modèles prédictifs avancés et nos visualisations interactives, vous pouvez prendre des décisions éclairées et optimiser votre stratégie marketing en temps réel.</p>
+                        <div class="about-stats">
+                            <div class="stat-item animate-fadeInUp">
+                                <div class="stat-value">95%</div>
+                                <div class="stat-label">Précision des prédictions</div>
+                            </div>
+                            <div class="stat-item animate-fadeInUp" style="animation-delay: 0.2s;">
+                                <div class="stat-value">+40%</div>
+                                <div class="stat-label">ROI moyen</div>
+                            </div>
+                            <div class="stat-item animate-fadeInUp" style="animation-delay: 0.4s;">
+                                <div class="stat-value">500+</div>
+                                <div class="stat-label">Clients satisfaits</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" id="services">
+        <div class="container">
+            <div class="section-title">
+                <h2>Nos services</h2>
+                <p>Comment pouvons-nous vous aider à optimiser vos campagnes marketing ?</p>
+            </div>
+            <div class="row">
+                <div class="col-lg-4 col-12 mb-4 mb-lg-0">
+                    <div class="service-tabs">
+                        <div class="service-tab active" data-tab="analysis">
+                            <h3 class="service-tab-title">Analyse des Canaux</h3>
+                            <p class="service-tab-description">Identifiez les canaux marketing les plus efficaces pour votre entreprise.</p>
+                        </div>
+                        <div class="service-tab" data-tab="predictions">
+                            <h3 class="service-tab-title">Prédictions de Performance</h3>
+                            <p class="service-tab-description">Obtenez des prévisions précises sur les résultats de vos campagnes.</p>
+                        </div>
+                        <div class="service-tab" data-tab="dashboard">
+                            <h3 class="service-tab-title">Dashboard Power BI</h3>
+                            <p class="service-tab-description">Visualisez vos données marketing en temps réel.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-8 col-12">
+                    <div class="service-content tab-content active" id="analysis">
+                        <div class="service-image">
+                            <img src="{% static 'images/im.png' %}" alt="Analyse des Canaux">
+                        </div>
+                        <h3 class="service-title">Analyse des Canaux</h3>
+                        <p class="service-description">Notre service d'analyse des canaux vous permet d'identifier précisément quels canaux marketing génèrent le meilleur retour sur investissement pour votre entreprise. Grâce à des analyses approfondies et des visualisations claires, vous pourrez comprendre où concentrer vos efforts et optimiser votre budget marketing.</p>
+                        <div class="service-features">
+                            <div class="service-feature">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Analyse comparative des canaux</span>
+                            </div>
+                            <div class="service-feature">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Suivi des performances en temps réel</span>
+                            </div>
+                            <div class="service-feature">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Recommandations d'optimisation</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="service-content tab-content" id="predictions">
+                        <div class="service-image">
+                            <img src="{% static 'images/services/startup-leader-drawing-flowchart-board-discussing-project.jpg' %}" alt="Prédictions de Performance">
+                        </div>
+                        <h3 class="service-title">Prédictions de Performance</h3>
+                        <p class="service-description">Anticipez les résultats de vos campagnes marketing avec nos modèles prédictifs basés sur l'intelligence artificielle. Notre technologie analyse vos données historiques et les tendances du marché pour vous fournir des prévisions précises qui vous aideront à prendre des décisions éclairées.</p>
+                        <div class="service-features">
+                            <div class="service-feature">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Modèles prédictifs avancés</span>
+                            </div>
+                            <div class="service-feature">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Prévisions de ROI par canal</span>
+                            </div>
+                            <div class="service-feature">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Scénarios d'optimisation budgétaire</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="service-content tab-content" id="dashboard">
+                        <div class="service-image">
+                            <img src="{% static 'images/services/bi.jpg' %}" alt="Dashboard Power BI">
+                        </div>
+                        <h3 class="service-title">Dashboard Power BI</h3>
+                        <p class="service-description">Explorez vos données marketing à travers des visualisations interactives et prenez des décisions éclairées grâce à nos tableaux de bord Power BI personnalisés. Nos dashboards vous offrent une vue d'ensemble claire et détaillée de vos performances marketing en temps réel.</p>
+                        <div class="service-features">
+                            <div class="service-feature">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Tableaux de bord personnalisables</span>
+                            </div>
+                            <div class="service-feature">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Visualisations interactives</span>
+                            </div>
+                            <div class="service-feature">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Rapports automatisés</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="container">
+            <div class="section-title">
+                <h2>Contactez-nous</h2>
+                <p>Vous avez des questions ? Notre équipe est là pour vous aider</p>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 col-12 mb-5 mb-lg-0">
+                    <form class="contact-form animate-fadeInRight" action="{% url 'index' %}#contact" method="post">
+                        {% csrf_token %}
+                        <h2 class="mb-4">Envoyez-nous un message</h2>
+                        <p class="mb-4">Nous vous répondrons dans les plus brefs délais.</p>
+                        
+                        <div class="form-group">
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                                <div class="text-danger">{{ form.name.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <div class="text-danger">{{ form.email.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form.message }}
+                            {% if form.message.errors %}
+                                <div class="text-danger">{{ form.message.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-paper-plane"></i> Envoyer
+                        </button>
+                    </form>
+                </div>
+                <div class="col-lg-6 col-12">
+                    <div class="contact-info animate-fadeInLeft">
+                        <h3 class="contact-info-title">Informations de contact</h3>
+                        <div class="contact-info-item">
+                            <div class="contact-info-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div>
+                                <h4>Adresse</h4>
+                                <p class="contact-info-text">Lac 2, Tunis</p>
+                            </div>
+                        </div>
+                        <div class="contact-info-item">
+                            <div class="contact-info-icon">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div>
+                                <h4>Téléphone</h4>
+                                <p class="contact-info-text">+216 72 580 655</p>
+                            </div>
+                        </div>
+                        <div class="contact-info-item">
+                            <div class="contact-info-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div>
+                                <h4>Email</h4>
+                                <p class="contact-info-text">contact@marketmind.com</p>
+                            </div>
+                        </div>
+                        <div class="map-container">
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12766.639133731262!2d10.2279873!3d36.8320915!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12fd34c6d1e93bef%3A0x4153c116a7a21ed3!2sLes%20Berges%20du%20Lac%202%2C%20Tunis!5e0!3m2!1sfr!2stn!4v1712432429123!5m2!1sfr!2stn" allowfullscreen="" loading="lazy"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Tabs functionality
+        const tabs = document.querySelectorAll('.service-tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs
+                tabs.forEach(t => t.classList.remove('active'));
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Hide all tab contents
+                const tabContents = document.querySelectorAll('.tab-content');
+                tabContents.forEach(content => content.classList.remove('active'));
+                
+                // Show the corresponding tab content
+                const tabId = this.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // Alert close functionality
+        const alertCloseButtons = document.querySelectorAll('.alert-close');
+        alertCloseButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                this.parentElement.style.display = 'none';
+            });
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Animation on scroll
+        const animateElements = document.querySelectorAll('.animate-fadeInUp, .animate-fadeInRight, .animate-fadeInLeft');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+        
+        animateElements.forEach(element => {
+            element.style.opacity = '0';
+            element.style.transform = 'translateY(20px)';
+            element.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+            observer.observe(element);
+        });
+    });
+</script>
+{% endblock %}

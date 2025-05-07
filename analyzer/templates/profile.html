@@ -1,0 +1,1151 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Mon Profil - MARKETMIND{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Variables - Inspirées par les couleurs du logo MARKETMIND */
+    :root {
+        --primary-color: #7AAEB5;
+        --secondary-color: #9ECBD1;
+        --accent-color: #5D8A91;
+        --dark-color: #334155;
+        --light-color: #F8FAFC;
+        --gray-color: #64748B;
+        --border-color: #E2E8F0;
+        
+        --primary-gradient: linear-gradient(135deg, #7AAEB5, #9ECBD1);
+        --secondary-gradient: linear-gradient(135deg, #F0F4FD, #E0F2F4);
+        --card-shadow: 0 10px 30px rgba(122, 174, 181, 0.15);
+        --hover-shadow: 0 15px 35px rgba(122, 174, 181, 0.25);
+        --transition-medium: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* Welcome Banner */
+    .welcome-banner {
+        background: var(--secondary-gradient);
+        border-radius: 20px;
+        padding: 2.5rem;
+        margin-bottom: 2.5rem;
+        margin-top: 5rem;
+        box-shadow: var(--card-shadow);
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        animation: fadeInUp 1s ease-out;
+    }
+
+    .welcome-banner::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%237AAEB5' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+        opacity: 0.5;
+    }
+
+    .welcome-content {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    @media (min-width: 768px) {
+        .welcome-content {
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+    }
+
+    .welcome-title {
+        font-size: 2.25rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+        background: linear-gradient(to right, var(--accent-color), var(--primary-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: -0.5px;
+    }
+
+    .welcome-text {
+        color: var(--gray-color);
+        font-weight: 400;
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+
+    /* Card */
+    .card {
+        background-color: white;
+        border-radius: 20px;
+        box-shadow: var(--card-shadow);
+        overflow: hidden;
+        border: 1px solid rgba(226, 232, 240, 0.5);
+        margin-bottom: 1.75rem;
+        transition: var(--transition-medium);
+        animation: fadeInUp 1s ease-out;
+    }
+
+    .card:hover {
+        box-shadow: var(--hover-shadow);
+        border-color: rgba(122, 174, 181, 0.2);
+    }
+
+    .card-header {
+        padding: 1.25rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 600;
+        border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+    }
+
+    .card-header h3 {
+        font-size: 1.1rem;
+        letter-spacing: -0.3px;
+        color: var(--primary-color);
+        margin: 0;
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    /* Button */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.85rem 1.75rem;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: var(--transition-medium);
+        cursor: pointer;
+        border: none;
+        font-size: 0.95rem;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+    }
+
+    .btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateX(-100%);
+        transition: var(--transition-medium);
+        z-index: -1;
+    }
+
+    .btn:hover::before {
+        transform: translateX(0);
+    }
+
+    .btn-primary {
+        background: var(--primary-gradient);
+        color: white;
+        box-shadow: 0 4px 15px rgba(122, 174, 181, 0.3);
+    }
+
+    .btn-primary:hover {
+        box-shadow: 0 8px 25px rgba(122, 174, 181, 0.4);
+        transform: translateY(-3px);
+    }
+
+    .btn-primary a {
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn i {
+        margin-right: 10px;
+        font-size: 1.1rem;
+    }
+
+    .btn-outline {
+        background: transparent;
+        border: 2px solid var(--primary-color);
+        color: var(--primary-color);
+        transition: var(--transition-medium);
+    }
+
+    .btn-outline:hover {
+        background: rgba(122, 174, 181, 0.1);
+        transform: translateY(-3px);
+    }
+
+    .btn-sm {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+    }
+
+    .btn-danger {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: white;
+        box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
+    }
+
+    .btn-danger:hover {
+        box-shadow: 0 6px 15px rgba(220, 38, 38, 0.3);
+        transform: translateY(-3px);
+    }
+
+    /* Profile Header */
+    .profile-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background-color: rgba(122, 174, 181, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        color: var(--primary-color);
+        margin-right: 1.5rem;
+        border: 3px solid white;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        position: relative;
+        overflow: hidden;
+        transition: var(--transition-medium);
+    }
+
+    .profile-avatar:hover {
+        transform: scale(1.05);
+    }
+
+    .profile-avatar-upload {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(122, 174, 181, 0.8);
+        color: white;
+        font-size: 0.75rem;
+        padding: 0.25rem;
+        text-align: center;
+        cursor: pointer;
+        opacity: 0;
+        transition: var(--transition-medium);
+    }
+
+    .profile-avatar:hover .profile-avatar-upload {
+        opacity: 1;
+    }
+
+    .profile-info {
+        flex: 1;
+    }
+
+    .profile-name {
+        font-size: 1.75rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+        color: var(--dark-color);
+    }
+
+    .profile-email {
+        color: var(--gray-color);
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .profile-status {
+        display: inline-block;
+        padding: 0.35rem 0.75rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        border-radius: 2rem;
+        background-color: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+
+    /* Tabs */
+    .profile-tabs {
+        display: flex;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 2rem;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .profile-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .profile-tab {
+        padding: 1rem 1.5rem;
+        font-weight: 500;
+        color: var(--gray-color);
+        border-bottom: 2px solid transparent;
+        cursor: pointer;
+        transition: var(--transition-medium);
+        white-space: nowrap;
+    }
+
+    .profile-tab:hover {
+        color: var(--primary-color);
+    }
+
+    .profile-tab.active {
+        color: var(--primary-color);
+        border-bottom-color: var(--primary-color);
+    }
+
+    .profile-tab i {
+        margin-right: 0.5rem;
+    }
+
+    /* Tab Content */
+    .tab-content {
+        display: none;
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    /* Form Elements */
+    .form-group {
+        margin-bottom: 1.75rem;
+        position: relative;
+        transition: var(--transition-medium);
+    }
+
+    .form-group:hover {
+        transform: translateY(-2px);
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: var(--dark-color);
+        transition: color 0.3s ease;
+    }
+
+    .form-control-wrapper {
+        position: relative;
+        transition: var(--transition-medium);
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.85rem 1rem 0.85rem 3rem;
+        border-radius: 0.75rem;
+        border: 2px solid rgba(226, 232, 240, 0.8);
+        background-color: #f8fafc;
+        color: var(--dark-color);
+        transition: var(--transition-medium);
+        font-size: 0.95rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 4px rgba(122, 174, 181, 0.1);
+        background-color: #ffffff;
+    }
+
+    .form-group:hover .form-control {
+        border-color: var(--primary-color);
+    }
+
+    .form-group:hover .form-label {
+        color: var(--primary-color);
+    }
+
+    /* Form Icon */
+    .form-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--primary-color);
+        font-size: 1.1rem;
+        transition: var(--transition-medium);
+    }
+
+    .form-group:hover .form-icon {
+        transform: translateY(-50%) scale(1.1);
+        color: var(--accent-color);
+    }
+
+    /* Edit field */
+    .edit-field {
+        display: none;
+    }
+
+    .edit-field.active {
+        display: flex;
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .view-field.hidden {
+        display: none;
+    }
+
+    .edit-button {
+        background-color: transparent;
+        border: none;
+        color: var(--primary-color);
+        cursor: pointer;
+        font-size: 1rem;
+        padding: 0.25rem;
+        transition: var(--transition-medium);
+        margin-left: 0.5rem;
+    }
+
+    .edit-button:hover {
+        transform: scale(1.2);
+        color: var(--accent-color);
+    }
+
+    /* Password strength */
+    .password-strength {
+        height: 5px;
+        border-radius: 5px;
+        margin-top: 0.5rem;
+        background-color: #e2e8f0;
+        overflow: hidden;
+    }
+
+    .password-strength-meter {
+        height: 100%;
+        border-radius: 5px;
+        transition: var(--transition-medium);
+    }
+
+    .strength-weak {
+        width: 25%;
+        background-color: #ef4444;
+    }
+
+    .strength-medium {
+        width: 50%;
+        background-color: #f59e0b;
+    }
+
+    .strength-good {
+        width: 75%;
+        background-color: #10b981;
+    }
+
+    .strength-strong {
+        width: 100%;
+        background-color: #059669;
+    }
+
+    .password-strength-text {
+        font-size: 0.75rem;
+        margin-top: 0.5rem;
+        font-weight: 500;
+    }
+
+    .strength-weak-text {
+        color: #ef4444;
+    }
+
+    .strength-medium-text {
+        color: #f59e0b;
+    }
+
+    .strength-good-text {
+        color: #10b981;
+    }
+
+    .strength-strong-text {
+        color: #059669;
+    }
+
+    /* Form check */
+    .form-check {
+        display: flex;
+        align-items: center;
+    }
+
+    .form-check-input {
+        width: 3rem;
+        height: 1.5rem;
+        appearance: none;
+        background-color: #e2e8f0;
+        border-radius: 1rem;
+        position: relative;
+        cursor: pointer;
+        transition: var(--transition-medium);
+    }
+
+    .form-check-input::before {
+        content: '';
+        position: absolute;
+        width: 1.25rem;
+        height: 1.25rem;
+        border-radius: 50%;
+        background-color: white;
+        top: 0.125rem;
+        left: 0.125rem;
+        transition: var(--transition-medium);
+    }
+
+    .form-check-input:checked {
+        background-color: var(--primary-color);
+    }
+
+    .form-check-input:checked::before {
+        left: 1.625rem;
+    }
+
+    /* Activity items */
+    .prediction-history {
+        margin-top: 1.5rem;
+    }
+
+    .prediction-item {
+        padding: 1.25rem;
+        border-radius: 0.75rem;
+        background-color: white;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        transition: var(--transition-medium);
+    }
+
+    .prediction-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+        border-color: var(--primary-color);
+    }
+
+    .prediction-icon {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 0.75rem;
+        background-color: rgba(122, 174, 181, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        color: var(--primary-color);
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+
+    .prediction-details {
+        flex: 1;
+    }
+
+    .prediction-title {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+        color: var(--dark-color);
+    }
+
+    .prediction-date {
+        font-size: 0.85rem;
+        color: var(--gray-color);
+    }
+
+    /* Filter buttons */
+    .filter-bar {
+        display: flex;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .filter-button {
+        padding: 0.5rem 1rem;
+        border-radius: 2rem;
+        font-size: 0.85rem;
+        font-weight: 500;
+        background-color: white;
+        border: 1px solid #e2e8f0;
+        color: var(--gray-color);
+        cursor: pointer;
+        transition: var(--transition-medium);
+    }
+
+    .filter-button:hover, .filter-button.active {
+        background-color: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Main Content -->
+<div class="main-content">
+    <div class="container">
+        <!-- Welcome Banner -->
+        <div class="welcome-banner">
+            <div class="welcome-content">
+                <div>
+                    <h2 class="welcome-title">Mon Profil</h2>
+                    <p class="welcome-text">Gérez vos informations personnelles et suivez votre activité</p>
+                </div>
+                <div>
+                    <a href="{% url 'dashboard' %}" class="btn btn-primary">
+                        <i class="fas fa-chart-line"></i>
+                        Retour au tableau de bord
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Content -->
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <!-- Profile Header -->
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        {% if user.profile.avatar %}
+                            <img src="{{ user.profile.avatar.url }}" alt="{{ user.get_full_name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                        {% else %}
+                            <i class="fas fa-user"></i>
+                        {% endif %}
+                        <div class="profile-avatar-upload">
+                            <i class="fas fa-camera"></i> Modifier
+                        </div>
+                    </div>
+                    <div class="profile-info">
+                        <h2 class="profile-name">{{ user.get_full_name }}</h2>
+                        <p class="profile-email">{{ user.email }}</p>
+                        <span class="profile-status">Compte actif</span>
+                    </div>
+                </div>
+
+                <!-- Profile Tabs -->
+                <div class="profile-tabs">
+                    <div class="profile-tab active" data-tab="personal-info">
+                        <i class="fas fa-user"></i> Informations personnelles
+                    </div>
+                    <div class="profile-tab" data-tab="security">
+                        <i class="fas fa-lock"></i> Sécurité
+                    </div>
+                    <div class="profile-tab" data-tab="activity">
+                        <i class="fas fa-history"></i> Activité récente
+                    </div>
+                </div>
+
+                <!-- Tab Contents -->
+                <div class="tab-content active" id="personal-info">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Informations personnelles</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="personal-info-form" method="post" action="{% url 'profile' %}">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col-md-6 col-12">
+                                        <div class="form-group">
+                                            <label class="form-label">Prénom</label>
+                                            <div class="view-field">
+                                                <span>{{ user.username }}</span>
+                                                <button type="button" class="edit-button" data-field="first_name">
+                                                    <i class="fas fa-pen"></i>
+                                                </button>
+                                            </div>
+                                            <div class="edit-field">
+                                                <div class="form-control-wrapper">
+                                                    <i class="fas fa-user form-icon"></i>
+                                                    <input type="text" class="form-control" value="{{ user.first_name }}" name="first_name">
+                                                </div>
+                                                <div class="d-flex mt-3">
+                                                    <button type="button" class="btn btn-primary btn-sm" onclick="saveField('first_name')">
+                                                        <i class="fas fa-save"></i> Enregistrer
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline btn-sm" style="margin-left: 0.5rem;" onclick="cancelEdit('first_name')">
+                                                        Annuler
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-12">
+                                        <div class="form-group">
+                                            <label class="form-label">Nom</label>
+                                            <div class="view-field">
+                                                <span>{{ user.last_name }}</span>
+                                                <button type="button" class="edit-button" data-field="last_name">
+                                                    <i class="fas fa-pen"></i>
+                                                </button>
+                                            </div>
+                                            <div class="edit-field">
+                                                <div class="form-control-wrapper">
+                                                    <i class="fas fa-user form-icon"></i>
+                                                    <input type="text" class="form-control" value="{{ user.last_name }}" name="last_name">
+                                                </div>
+                                                <div class="d-flex mt-3">
+                                                    <button type="button" class="btn btn-primary btn-sm" onclick="saveField('last_name')">
+                                                        <i class="fas fa-save"></i> Enregistrer
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline btn-sm" style="margin-left: 0.5rem;" onclick="cancelEdit('last_name')">
+                                                        Annuler
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 col-12">
+                                        <div class="form-group">
+                                            <label class="form-label">Email</label>
+                                            <div class="view-field">
+                                                <span>{{ user.email }}</span>
+                                                <button type="button" class="edit-button" data-field="email">
+                                                    <i class="fas fa-pen"></i>
+                                                </button>
+                                            </div>
+                                            <div class="edit-field">
+                                                <div class="form-control-wrapper">
+                                                    <i class="fas fa-envelope form-icon"></i>
+                                                    <input type="email" class="form-control" value="{{ user.email }}" name="email">
+                                                </div>
+                                                <div class="d-flex mt-3">
+                                                    <button type="button" class="btn btn-primary btn-sm" onclick="saveField('email')">
+                                                        <i class="fas fa-save"></i> Enregistrer
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline btn-sm" style="margin-left: 0.5rem;" onclick="cancelEdit('email')">
+                                                        Annuler
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-12">
+                                        <div class="form-group">
+                                            <label class="form-label">Téléphone</label>
+                                            <div class="view-field">
+                                                <span>{{ user.profile.phone|default:"Non renseigné" }}</span>
+                                                <button type="button" class="edit-button" data-field="phone">
+                                                    <i class="fas fa-pen"></i>
+                                                </button>
+                                            </div>
+                                            <div class="edit-field">
+                                                <div class="form-control-wrapper">
+                                                    <i class="fas fa-phone form-icon"></i>
+                                                    <input type="tel" class="form-control" value="{{ user.profile.phone|default:'' }}" name="phone">
+                                                </div>
+                                                <div class="d-flex mt-3">
+                                                    <button type="button" class="btn btn-primary btn-sm" onclick="saveField('phone')">
+                                                        <i class="fas fa-save"></i> Enregistrer
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline btn-sm" style="margin-left: 0.5rem;" onclick="cancelEdit('phone')">
+                                                        Annuler
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 col-12">
+                                        <div class="form-group">
+                                            <label class="form-label">Entreprise</label>
+                                            <div class="view-field">
+                                                <span>{{ user.profile.company|default:"Non renseigné" }}</span>
+                                                <button type="button" class="edit-button" data-field="company">
+                                                    <i class="fas fa-pen"></i>
+                                                </button>
+                                            </div>
+                                            <div class="edit-field">
+                                                <div class="form-control-wrapper">
+                                                    <i class="fas fa-building form-icon"></i>
+                                                    <input type="text" class="form-control" value="{{ user.profile.company|default:'' }}" name="company">
+                                                </div>
+                                                <div class="d-flex mt-3">
+                                                    <button type="button" class="btn btn-primary btn-sm" onclick="saveField('company')">
+                                                        <i class="fas fa-save"></i> Enregistrer
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline btn-sm" style="margin-left: 0.5rem;" onclick="cancelEdit('company')">
+                                                        Annuler
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-12">
+                                        <div class="form-group">
+                                            <label class="form-label">Poste</label>
+                                            <div class="view-field">
+                                                <span>{{ user.profile.position|default:"Non renseigné" }}</span>
+                                                <button type="button" class="edit-button" data-field="position">
+                                                    <i class="fas fa-pen"></i>
+                                                </button>
+                                            </div>
+                                            <div class="edit-field">
+                                                <div class="form-control-wrapper">
+                                                    <i class="fas fa-briefcase form-icon"></i>
+                                                    <input type="text" class="form-control" value="{{ user.profile.position|default:'' }}" name="position">
+                                                </div>
+                                                <div class="d-flex mt-3">
+                                                    <button type="button" class="btn btn-primary btn-sm" onclick="saveField('position')">
+                                                        <i class="fas fa-save"></i> Enregistrer
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline btn-sm" style="margin-left: 0.5rem;" onclick="cancelEdit('position')">
+                                                        Annuler
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="security">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Sécurité</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="security-form" method="post" action="{% url 'change_password' %}">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label class="form-label">Mot de passe actuel</label>
+                                    <div class="form-control-wrapper">
+                                        <i class="fas fa-lock form-icon"></i>
+                                        <input type="password" class="form-control" placeholder="Entrez votre mot de passe actuel" name="current_password">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Nouveau mot de passe</label>
+                                    <div class="form-control-wrapper">
+                                        <i class="fas fa-key form-icon"></i>
+                                        <input type="password" class="form-control" placeholder="Entrez votre nouveau mot de passe" name="new_password" id="new_password">
+                                    </div>
+                                    <div class="password-strength">
+                                        <div class="password-strength-meter"></div>
+                                    </div>
+                                    <div class="password-strength-text"></div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Confirmer le nouveau mot de passe</label>
+                                    <div class="form-control-wrapper">
+                                        <i class="fas fa-key form-icon"></i>
+                                        <input type="password" class="form-control" placeholder="Confirmez votre nouveau mot de passe" name="confirm_password">
+                                    </div>
+                                </div>
+
+                                <div class="action-buttons">
+                                    <button type="submit" class="btn btn-primary" id="change-password-btn">
+                                        <i class="fas fa-save"></i> Changer le mot de passe
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h3>Authentification à deux facteurs</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h4 style="margin-bottom: 0.5rem;">Authentification par SMS</h4>
+                                    <p style="color: var(--gray-color); margin-bottom: 0;">Recevez un code de vérification par SMS lors de la connexion.</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="sms-2fa" {% if user.profile.sms_2fa %}checked{% endif %}>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mt-4">
+                                <div>
+                                    <h4 style="margin-bottom: 0.5rem;">Authentification par application</h4>
+                                    <p style="color: var(--gray-color); margin-bottom: 0;">Utilisez une application d'authentification pour générer des codes.</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="app-2fa" {% if user.profile.app_2fa %}checked{% endif %}>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="activity">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Activité récente</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="filter-bar">
+                                <button class="filter-button active">Toutes</button>
+                                <button class="filter-button">Prédictions</button>
+                                <button class="filter-button">Connexions</button>
+                                <button class="filter-button">Modifications</button>
+                            </div>
+
+                            <div class="prediction-history">
+                                {% if recent_activities %}
+                                    {% for activity in recent_activities %}
+                                        <div class="prediction-item">
+                                            <div class="prediction-icon">
+                                                {% if activity.activity_type == 'success' %}
+                                                    <i class="fas fa-check"></i>
+                                                {% elif activity.activity_type == 'warning' %}
+                                                    <i class="fas fa-exclamation"></i>
+                                                {% elif activity.activity_type == 'danger' %}
+                                                    <i class="fas fa-times"></i>
+                                                {% else %}
+                                                    <i class="fas fa-info"></i>
+                                                {% endif %}
+                                            </div>
+                                            <div class="prediction-details">
+                                                <h4 class="prediction-title">{{ activity.title }}</h4>
+                                                <p class="prediction-date">{{ activity.timestamp|date:"d F Y à H:i" }}</p>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="text-center mt-4">
+                                        <i class="fas fa-history" style="font-size: 3rem; color: #e2e8f0; margin-bottom: 1rem;"></i>
+                                        <p>Aucune activité récente à afficher</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Tabs
+        const tabs = document.querySelectorAll('.profile-tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                const tabId = this.getAttribute('data-tab');
+                
+                // Remove active class from all tabs and contents
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                // Add active class to current tab and content
+                this.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // Edit field functionality
+        const editButtons = document.querySelectorAll('.edit-button');
+        
+        editButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const fieldName = this.getAttribute('data-field');
+                const viewField = this.closest('.view-field');
+                const editField = viewField.nextElementSibling;
+                
+                viewField.classList.add('hidden');
+                editField.classList.add('active');
+            });
+        });
+
+        // Password strength meter
+        const passwordInput = document.getElementById('new_password');
+        const strengthMeter = document.querySelector('.password-strength-meter');
+        const strengthText = document.querySelector('.password-strength-text');
+        
+        if (passwordInput) {
+            passwordInput.addEventListener('input', function() {
+                const password = this.value;
+                let strength = 0;
+                
+                if (password.length >= 8) strength += 1;
+                if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength += 1;
+                if (password.match(/\d/)) strength += 1;
+                if (password.match(/[^a-zA-Z\d]/)) strength += 1;
+                
+                switch (strength) {
+                    case 0:
+                        strengthMeter.className = 'password-strength-meter';
+                        strengthMeter.style.width = '0';
+                        strengthText.textContent = '';
+                        strengthText.className = 'password-strength-text';
+                        break;
+                    case 1:
+                        strengthMeter.className = 'password-strength-meter strength-weak';
+                        strengthText.textContent = 'Faible';
+                        strengthText.className = 'password-strength-text strength-weak-text';
+                        break;
+                    case 2:
+                        strengthMeter.className = 'password-strength-meter strength-medium';
+                        strengthText.textContent = 'Moyen';
+                        strengthText.className = 'password-strength-text strength-medium-text';
+                        break;
+                    case 3:
+                        strengthMeter.className = 'password-strength-meter strength-good';
+                        strengthText.textContent = 'Bon';
+                        strengthText.className = 'password-strength-text strength-good-text';
+                        break;
+                    case 4:
+                        strengthMeter.className = 'password-strength-meter strength-strong';
+                        strengthText.textContent = 'Fort';
+                        strengthText.className = 'password-strength-text strength-strong-text';
+                        break;
+                }
+            });
+        }
+
+        // Filter buttons
+        const filterButtons = document.querySelectorAll('.filter-button');
+        
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                filterButtons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Ici, vous pourriez ajouter une logique pour filtrer les activités
+                // en fonction du type sélectionné
+            });
+        });
+    });
+
+    // Fonction pour sauvegarder un champ
+    function saveField(fieldName) {
+        const input = document.querySelector(`input[name="${fieldName}"]`);
+        const viewField = document.querySelector(`.view-field:has(button[data-field="${fieldName}"]) span`);
+        const editField = input.closest('.edit-field');
+        const viewFieldContainer = editField.previousElementSibling;
+        
+        // Simuler la sauvegarde avec AJAX
+        const saveButton = editField.querySelector('.btn-primary');
+        saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sauvegarde...';
+        saveButton.disabled = true;
+        
+        // Créer un objet FormData pour l'envoi
+        const formData = new FormData();
+        formData.append('field', fieldName);
+        formData.append('value', input.value);
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+        
+        // Envoyer la requête AJAX
+        fetch('{% url "profile" %}', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .catch(error => {
+            console.error('Erreur:', error);
+        })
+        .finally(() => {
+            // Mettre à jour la valeur affichée
+            viewField.textContent = input.value;
+            
+            // Cacher le champ d'édition et afficher la vue
+            editField.classList.remove('active');
+            viewFieldContainer.classList.remove('hidden');
+            
+            // Réinitialiser le bouton
+            saveButton.innerHTML = '<i class="fas fa-save"></i> Enregistrer';
+            saveButton.disabled = false;
+        });
+    }
+
+    // Fonction pour annuler l'édition d'un champ
+    function cancelEdit(fieldName) {
+        const editField = document.querySelector(`input[name="${fieldName}"]`).closest('.edit-field');
+        const viewFieldContainer = editField.previousElementSibling;
+        
+        // Cacher le champ d'édition et afficher la vue
+        editField.classList.remove('active');
+        viewFieldContainer.classList.remove('hidden');
+    }
+
+    // Upload d'avatar
+    document.querySelector('.profile-avatar-upload').addEventListener('click', function() {
+        // Créer un input file invisible
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = 'image/*';
+        fileInput.style.display = 'none';
+        document.body.appendChild(fileInput);
+        
+        // Déclencher le clic sur l'input
+        fileInput.click();
+        
+        // Gérer le changement de fichier
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const formData = new FormData();
+                formData.append('avatar', this.files[0]);
+                formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+                
+                fetch('{% url "profile" %}', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Recharger la page pour afficher le nouvel avatar
+                        location.reload();
+                    } else {
+                        alert('Une erreur est survenue lors de l\'upload');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    alert('Une erreur est survenue lors de l\'upload');
+                });
+            }
+            
+            // Supprimer l'input après utilisation
+            document.body.removeChild(fileInput);
+        });
+    });
+</script>
+{% endblock %}

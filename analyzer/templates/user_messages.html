@@ -1,0 +1,368 @@
+{% extends 'base.html' %}
+
+{% block title %}Mes Messages - MARKETMIND{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Variables - Inspirées par les couleurs du logo MARKETMIND */
+    :root {
+        --primary-color: #7AAEB5;
+        --secondary-color: #9ECBD1;
+        --accent-color: #5D8A91;
+        --dark-color: #334155;
+        --light-color: #F8FAFC;
+        --gray-color: #64748B;
+        --border-color: #E2E8F0;
+        
+        --primary-gradient: linear-gradient(135deg, #7AAEB5, #9ECBD1);
+        --secondary-gradient: linear-gradient(135deg, #F0F4FD, #E0F2F4);
+        --card-shadow: 0 10px 30px rgba(122, 174, 181, 0.15);
+        --hover-shadow: 0 15px 35px rgba(122, 174, 181, 0.25);
+        --transition-medium: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* Styles pour les messages */
+    .page-header {
+        margin-bottom: 2rem;
+        margin-top: 7rem;
+    }
+    
+    .page-header h1 {
+        font-size: 2.25rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+        background: linear-gradient(to right, var(--accent-color), var(--primary-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: -0.5px;
+    }
+    
+    .page-header .text-muted {
+        color: var(--gray-color);
+        font-size: 1.1rem;
+    }
+    
+    .message-card {
+        background-color: #fff;
+        border-radius: 20px;
+        box-shadow: var(--card-shadow);
+        margin-bottom: 20px;
+        overflow: hidden;
+        border: 1px solid rgba(226, 232, 240, 0.5);
+        transition: var(--transition-medium);
+        animation: fadeInUp 0.5s ease-out;
+    }
+    
+    .message-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--hover-shadow);
+        border-color: rgba(122, 174, 181, 0.2);
+    }
+    
+    .message-card.new {
+        border-left: 4px solid var(--primary-color);
+    }
+    
+    .message-card.responded {
+        border-left: 4px solid #10b981;
+    }
+    
+    .message-header {
+        background-color: #f8f9fa;
+        padding: 15px 20px;
+        border-bottom: 1px solid #e9ecef;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .message-title {
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: var(--dark-color);
+    }
+    
+    .message-date {
+        font-size: 0.85rem;
+        color: var(--gray-color);
+    }
+    
+    .message-status {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    
+    .status-new {
+        background-color: rgba(122, 174, 181, 0.1);
+        color: var(--primary-color);
+    }
+    
+    .status-responded {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+    
+    .message-body {
+        padding: 20px;
+    }
+    
+    .message-content {
+        margin-bottom: 20px;
+    }
+    
+    .message-label {
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--dark-color);
+    }
+    
+    .message-text {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border: 1px solid rgba(226, 232, 240, 0.8);
+    }
+    
+    .response-container {
+        border-top: 1px solid #e9ecef;
+        padding-top: 40px;
+        margin-top: 30px;
+    }
+    
+    .admin-info {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    
+    .admin-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--primary-gradient);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+        font-weight: bold;
+        box-shadow: 0 4px 10px rgba(122, 174, 181, 0.3);
+    }
+    
+    .admin-name {
+        font-weight: 600;
+        color: var(--dark-color);
+    }
+    
+    .admin-date {
+        font-size: 0.85rem;
+        color: var(--gray-color);
+    }
+    
+    .response-text {
+        background-color: rgba(122, 174, 181, 0.05);
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 4px solid var(--primary-color);
+    }
+    
+    .waiting-response {
+        font-style: italic;
+        color: var(--gray-color);
+        display: flex;
+        align-items: center;
+        padding: 10px 15px;
+        background-color: rgba(226, 232, 240, 0.3);
+        border-radius: 8px;
+    }
+    
+    .waiting-response i {
+        margin-right: 8px;
+        color: var(--primary-color);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 50px 0;
+        animation: fadeInUp 0.5s ease-out;
+    }
+    
+    .empty-state i {
+        font-size: 3rem;
+        color: var(--secondary-color);
+        margin-bottom: 20px;
+        opacity: 0.5;
+    }
+    
+    .empty-state p {
+        color: var(--gray-color);
+        margin-bottom: 20px;
+        font-size: 1.1rem;
+    }
+    
+    .btn-primary {
+        background: var(--primary-gradient);
+        color: white;
+        box-shadow: 0 4px 15px rgba(122, 174, 181, 0.3);
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: var(--transition-medium);
+        display: inline-flex;
+        align-items: center;
+    }
+    
+    .btn-primary:hover {
+        box-shadow: 0 8px 25px rgba(122, 174, 181, 0.4);
+        transform: translateY(-3px);
+    }
+    
+    .btn-primary i {
+        margin-right: 8px;
+    }
+    
+    /* Animation */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Alert styles */
+    .alert {
+        border-radius: 15px;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid transparent;
+        animation: fadeInUp 0.5s ease-out;
+    }
+    
+    .alert-success {
+        background-color: rgba(16, 185, 129, 0.1);
+        border-color: rgba(16, 185, 129, 0.2);
+        color: #10b981;
+    }
+    
+    .alert-danger {
+        background-color: rgba(239, 68, 68, 0.1);
+        border-color: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+    }
+    
+    .alert-warning {
+        background-color: rgba(245, 158, 11, 0.1);
+        border-color: rgba(245, 158, 11, 0.2);
+        color: #f59e0b;
+    }
+    
+    .alert-info {
+        background-color: rgba(122, 174, 181, 0.1);
+        border-color: rgba(122, 174, 181, 0.2);
+        color: var(--primary-color);
+    }
+    
+    .btn-close {
+        background: transparent;
+        border: none;
+        font-size: 1.25rem;
+        line-height: 1;
+        color: currentColor;
+        opacity: 0.5;
+        padding: 0;
+        cursor: pointer;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>Mes Messages</h1>
+        <p class="text-muted">Consultez vos messages et les réponses de notre équipe</p>
+    </div>
+    
+    <!-- Messages de notification -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    <!-- Liste des messages -->
+    {% if user_messages %}
+        {% for message in user_messages %}
+            <div class="message-card {% if message.status == 'responded' %}responded{% else %}new{% endif %}">
+                <div class="message-header">
+                    <div>
+                        <div class="message-title">{{ message.subject|default:"(Sans sujet)" }}</div>
+                        <div class="message-date">Envoyé le {{ message.created_at|date:"d/m/Y à H:i" }}</div>
+                    </div>
+                    <div class="message-status {% if message.status == 'responded' %}status-responded{% else %}status-new{% endif %}">
+                        {% if message.status == 'responded' %}
+                            <i class="fas fa-check-circle me-1"></i> Répondu
+                        {% else %}
+                            <i class="fas fa-clock me-1"></i> En attente
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="message-body">
+                    <div class="message-content">
+                        <div class="message-label">Votre message :</div>
+                        <div class="message-text">
+                            {{ message.message|linebreaks }}
+                        </div>
+                    </div>
+                    
+                    {% if message.status == 'responded' %}
+                        <div class="response-container">
+                            <div class="message-label">Réponse :</div>
+                            <div class="admin-info">
+                                <div class="admin-avatar">
+                                    {% if message.responded_by.get_full_name %}
+                                        {{ message.responded_by.get_full_name|slice:":1" }}
+                                    {% else %}
+                                        {{ message.responded_by.username|slice:":1" }}
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <div class="admin-name">{{ message.responded_by.get_full_name|default:message.responded_by.username }}</div>
+                                    <div class="admin-date">{{ message.responded_at|date:"d/m/Y à H:i" }}</div>
+                                </div>
+                            </div>
+                            <div class="response-text">
+                                {{ message.response|linebreaks }}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="waiting-response">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Nous n'avons pas encore répondu à ce message. Nous vous répondrons dans les plus brefs délais.</span>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-envelope-open"></i>
+            <p>Vous n'avez pas encore envoyé de messages.</p>
+            <a href="/#contact" class="btn btn-primary">
+                <i class="fas fa-paper-plane"></i> Nous contacter
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
