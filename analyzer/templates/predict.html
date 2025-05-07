@@ -760,23 +760,25 @@
                                         <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
                                         <div class="form-control-wrapper">
                                             {% if "budget" in field.label|lower or "coût" in field.label|lower %}
-                                                <i class="fas fa-euro-sign form-icon"></i>
-                                                <div class="form-tooltip">Entrez votre budget marketing</div>
-                                            {% elif "temps" in field.label|lower or "durée" in field.label|lower %}
-                                                <i class="fas fa-clock form-icon"></i>
-                                                <div class="form-tooltip">Durée de la campagne</div>
-                                            {% elif "taux" in field.label|lower or "pourcentage" in field.label|lower %}
-                                                <i class="fas fa-percent form-icon"></i>
-                                                <div class="form-tooltip">Pourcentage estimé</div>
-                                            {% elif "nombre" in field.label|lower or "quantité" in field.label|lower %}
-                                                <i class="fas fa-hashtag form-icon"></i>
-                                                <div class="form-tooltip">Quantité estimée</div>
-                                            {% elif "canal" in field.label|lower or "média" in field.label|lower %}
-                                                <i class="fas fa-bullhorn form-icon"></i>
-                                                <div class="form-tooltip">Sélectionnez votre canal marketing</div>
-                                            {% elif "client" in field.label|lower or "utilisateur" in field.label|lower %}
-                                                <i class="fas fa-users form-icon"></i>
-                                                <div class="form-tooltip">Nombre de clients ciblés</div>
+        <i class="fas fa-euro-sign me-1"></i>
+    {% elif "temps" in field.label|lower or "durée" in field.label|lower %}
+        <i class="fas fa-clock me-1"></i>
+    {% elif "taux" in field.label|lower or "pourcentage" in field.label|lower %}
+        <i class="fas fa-percent me-1"></i>
+    {% elif "nombre" in field.label|lower or "quantité" in field.label|lower %}
+        <i class="fas fa-hashtag me-1"></i>
+    {% elif "canal" in field.label|lower or "média" in field.label|lower %}
+        <i class="fas fa-bullhorn me-1"></i>
+    {% elif "client" in field.label|lower or "utilisateur" in field.label|lower %}
+        <i class="fas fa-users me-1"></i>
+    {% elif "engagement" in field.label|lower %}
+        <i class="fas fa-chart-line me-1"></i>
+    {% elif "cpc" in field.label|lower %}
+        <i class="fas fa-dollar-sign me-1"></i>
+    {% elif "ctr" in field.label|lower %}
+        <i class="fas fa-mouse-pointer me-1"></i>
+    {% elif "type" in field.label|lower %}
+        <i class="fas fa-bullseye me-1"></i>
                                             {% else %}
                                                 <i class="fas fa-chart-bar form-icon"></i>
                                                 <div class="form-tooltip">Entrez une valeur</div>
