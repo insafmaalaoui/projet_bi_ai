@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Rapport de Prédiction - MARKETMIND</title>
+    <style>
+        @page {
+            size: a4 portrait;
+            margin: 2cm;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            color: #334155;
+            line-height: 1.6;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            max-width: 200px;
+            margin-bottom: 20px;
+        }
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #7AAEB5;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            font-size: 16px;
+            color: #64748B;
+        }
+        .date {
+            text-align: right;
+            margin-bottom: 30px;
+            font-size: 14px;
+            color: #64748B;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #7AAEB5;
+            border-bottom: 1px solid #E2E8F0;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+        .result-box {
+            background-color: #F0F4FD;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .result-value {
+            font-size: 36px;
+            font-weight: bold;
+            color: #7AAEB5;
+        }
+        .result-label {
+            font-size: 14px;
+            color: #64748B;
+        }
+        .badge {
+            display: inline-block;
+            padding: 5px 15px;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 20px;
+            margin-top: 10px;
+        }
+        .badge-success {
+            background-color: #D1FAE5;
+            color: #10B981;
+        }
+        .badge-warning {
+            background-color: #FEF3C7;
+            color: #D97706;
+        }
+        .badge-danger {
+            background-color: #FEE2E2;
+            color: #DC2626;
+        }
+        .form-data {
+            margin-bottom: 20px;
+        }
+        .form-row {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        .form-label {
+            font-weight: bold;
+            width: 40%;
+        }
+        .form-value {
+            width: 60%;
+        }
+        .recommendations {
+            margin-bottom: 20px;
+        }
+        .recommendation-item {
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+        }
+        .recommendation-item:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #7AAEB5;
+        }
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #64748B;
+            margin-top: 50px;
+            border-top: 1px solid #E2E8F0;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="title">MARKETMIND</div>
+        <div class="subtitle">Rapport de Prédiction Marketing</div>
+    </div>
+    
+    <div class="date">
+        Date: {{ date }}
+    </div>
+    
+    <div class="section">
+        <div class="section-title">Résultat de la Prédiction</div>
+        <div class="result-box">
+            <div class="result-value">{{ prediction }}</div>
+            <div class="result-label">ROI estimé</div>
+            
+            {% if prediction >= 4 %}
+            <div class="badge badge-success">Excellent</div>
+            {% elif prediction >= 2.5 %}
+            <div class="badge badge-warning">Bon</div>
+            {% else %}
+            <div class="badge badge-danger">À améliorer</div>
+            {% endif %}
+        </div>
+        
+        <p>
+            Votre ROI prévu de <strong>{{ prediction }}</strong> indique 
+            {% if prediction >= 4 %}
+            un excellent retour sur investissement pour votre campagne marketing.
+            {% elif prediction >= 2.5 %}
+            un bon retour sur investissement pour votre campagne marketing.
+            {% else %}
+            un retour sur investissement à améliorer pour votre campagne marketing.
+            {% endif %}
+        </p>
+        <p>Pour chaque euro investi, vous pouvez vous attendre à un retour de <strong>{{ prediction }}</strong> euros.</p>
+    </div>
+    
+    <div class="section">
+        <div class="section-title">Données d'entrée</div>
+        <div class="form-data">
+            {% for key, value in form_data.items %}
+            <div class="form-row">
+                <div class="form-label">{{ key|title }}</div>
+                <div class="form-value">{{ value }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <div class="section">
+        <div class="section-title">Recommandations Personnalisées</div>
+        <div class="recommendations">
+            {% for recommendation in recommendations %}
+            <div class="recommendation-item">{{ recommendation }}</div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <div class="footer">
+        © {% now "Y" %} MARKETMIND - Ce rapport est généré automatiquement et confidentiel.
+    </div>
+</body>
+</html>

@@ -27,6 +27,11 @@ from django.utils import timezone
 from datetime import timedelta
 from .models import Message, Activity
 from .utils import log_activity
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+from io import BytesIO
+import datetime
 
 # Ignorer les avertissements spécifiques de version scikit-learn
 warnings.filterwarnings("ignore", category=InconsistentVersionWarning)
@@ -155,6 +160,9 @@ def predict(request):
                            description=f"A fait une prédiction",
                            activity_type='success'
         ) 
+                    # Dans votre fonction predict, après avoir calculé la prédiction
+                    request.session['prediction'] = prediction
+                    request.session['form_data'] = form.cleaned_data
 
             except Exception as e:
                 error_message = f"Erreur lors de la prédiction : {str(e)}"
@@ -721,3 +729,78 @@ def user_messages(request):
     }
     
     return render(request, 'user_messages.html', context)
+
+
+def generate_pdf(request):
+    # Récupérer les données de prédiction et du formulaire depuis la session
+    prediction = request.session.get('prediction', None)
+    form_data = request.session.get('form_data', {})
+    
+    # Si aucune prédiction n'est disponible, rediriger vers la page de prédiction
+    if prediction is None:
+        return redirect('predict')
+    
+    # Préparer le contexte pour le template PDF
+    context = {
+        'prediction': prediction,
+        'form_data': form_data,
+        'date': datetime.datetime.now().strftime("%d/%m/%Y"),
+        'recommendations': generate_recommendations(prediction, form_data)
+    }
+    
+    # Charger le template HTML pour le PDF
+    template = get_template('pdf/prediction_report.html')
+    html = template.render(context)
+    
+    # Créer un objet PDF
+    result = BytesIO()
+    pdf = pisa.pisaDocument(BytesIO(html.encode("UTF-8")), result)
+    
+    # Vérifier si la création du PDF a réussi
+    if not pdf.err:
+        # Définir les en-têtes de la réponse pour le téléchargement
+        response = HttpResponse(result.getvalue(), content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="rapport_prediction.pdf"'
+        return response
+    
+    # En cas d'erreur, renvoyer une page d'erreur
+    return HttpResponse("Une erreur est survenue lors de la génération du PDF", status=400)
+
+def generate_recommendations(prediction, form_data):
+    """Génère des recommandations personnalisées basées sur les résultats de prédiction et les données du formulaire"""
+    recommendations = []
+    
+    # Recommandations de base
+    recommendations.append("Assurez-vous d'avoir une stratégie de contenu cohérente sur tous vos canaux marketing.")
+    recommendations.append("Suivez régulièrement vos KPIs pour ajuster votre stratégie en temps réel.")
+    
+    # Recommandations basées sur le ROI prédit
+    if prediction:
+        if prediction >= 4:
+            recommendations.append("Votre ROI prévu est excellent. Envisagez d'augmenter votre budget marketing pour maximiser vos résultats.")
+            recommendations.append("Documentez votre stratégie actuelle pour reproduire ce succès dans vos futures campagnes.")
+        elif prediction >= 2.5:
+            recommendations.append("Votre ROI prévu est bon. Cherchez à optimiser certains aspects de votre campagne pour améliorer davantage vos résultats.")
+            recommendations.append("Testez différentes approches créatives pour identifier ce qui résonne le mieux avec votre audience.")
+        else:
+            recommendations.append("Votre ROI prévu est à améliorer. Réévaluez votre stratégie marketing et envisagez de réallouer votre budget.")
+            recommendations.append("Concentrez-vous sur un ou deux canaux marketing au lieu de disperser vos efforts.")
+    
+    # Recommandations basées sur les données du formulaire
+    if 'canal' in form_data:
+        canal = form_data['canal'].lower()
+        if 'Facebook' in canal:
+            recommendations.append("Pour vos campagnes facebook, privilégiez des objets personnalisés et testez différentes heures d'envoi.")
+            recommendations.append("Segmentez votre liste d'emails pour des messages plus ciblés et pertinents.")
+        elif 'social' in canal or 'réseaux' in canal:
+            recommendations.append("Sur les réseaux sociaux, publiez régulièrement et engagez-vous avec votre audience.")
+            recommendations.append("Utilisez des visuels de haute qualité et adaptez votre contenu à chaque plateforme.")
+        elif 'Influencer' in canal or 'référencement' in canal:
+            recommendations.append("Pour améliorer votre Influencer, concentrez-vous sur des mots-clés pertinents et créez du contenu de qualité.")
+            recommendations.append("Travaillez sur l'expérience utilisateur de votre site pour réduire le taux de rebond.")
+        elif 'Display' in canal or 'publicité' in canal:
+            recommendations.append("Pour vos campagnes Display, affinez régulièrement vos mots-clés et optimisez vos enchères.")
+            recommendations.append("Créez des pages d'atterrissage spécifiques pour chaque campagne publicitaire.")
+    
+    # Limiter à 5 recommandations maximum
+    return recommendations[:5]

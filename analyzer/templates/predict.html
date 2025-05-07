@@ -685,6 +685,7 @@
 {% endblock %}
 
 {% block content %}
+<script src="{% static 'js/prediction.js' %}"></script>
 <!-- Main Content -->
 <div class="main-content">
     <div class="container">
@@ -853,7 +854,7 @@
                                             <p class="interpretation-text">Pour chaque euro investi, vous pouvez vous attendre à un retour de <strong>{{ prediction }}</strong> euros.</p>
                                             
                                             <div class="action-buttons">
-                                                <a href="#" class="btn btn-outline">
+                                                <a href="{% url 'generate_pdf' %}"class="btn btn-outline">
                                                     <i class="fas fa-download"></i>
                                                     Télécharger le rapport
                                                 </a>
