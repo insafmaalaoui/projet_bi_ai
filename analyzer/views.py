@@ -32,6 +32,246 @@ from django.template.loader import get_template
 from xhtml2pdf import pisa
 from io import BytesIO
 import datetime
+import requests
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from dotenv import load_dotenv
+import pandas as pd
+from django.shortcuts import render
+import os
+import plotly.express as px
+import plotly.offline as opy
+import numpy as np
+import plotly.express as px
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+import plotly.offline as opy
+import os
+
+def dashboard_view(request):
+    # Récupération des données
+    # Option 1: Depuis un fichier CSV
+    csv_path = os.path.join(os.path.dirname(__file__), 'data', 'data_to_use.csv')
+    df = pd.read_csv(csv_path)
+    
+    # Option 2: Depuis la base de données (décommentez si vous préférez utiliser les données de la BD)
+    # queryset = MarketingData.objects.all()
+    # df = pd.DataFrame.from_records(queryset.values())
+    
+    # Préparation des KPIs
+    kpis = {
+        'total_campaigns': len(df),
+        'avg_roi': round(df['ROI'].mean(), 2),
+        'max_roi': round(df['ROI'].max(), 2),
+        'avg_conversion': round(df['Conversion_Rate'].mean(), 2),
+        'total_cost': round(df['Acquisition_Cost'].sum(), 2),
+        'avg_cpc': round(df['CPC'].mean(), 2),
+    }
+    
+    # Préparation des données pour les graphiques
+    # 1. Distribution du ROI
+    roi_hist = px.histogram(
+        df, 
+        x='ROI',
+        nbins=20,
+        title='Distribution du ROI',
+        color_discrete_sequence=['#7AAEB5'],
+        opacity=0.8
+    )
+    roi_hist.update_layout(
+        xaxis_title='ROI',
+        yaxis_title='Nombre de campagnes',
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        margin=dict(l=20, r=20, t=40, b=20),
+        height=350
+    )
+    
+    # 2. ROI par type de campagne
+    campaign_roi = df.groupby('Campaign_Type')['ROI'].mean().reset_index()
+    campaign_roi_fig = px.bar(
+        campaign_roi,
+        x='Campaign_Type',
+        y='ROI',
+        title='ROI moyen par type de campagne',
+        color='ROI',
+        color_continuous_scale='Teal',
+        text_auto='.2f'
+    )
+    campaign_roi_fig.update_layout(
+        xaxis_title='Type de campagne',
+        yaxis_title='ROI moyen',
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        margin=dict(l=20, r=20, t=40, b=20),
+        height=350
+    )
+    
+    # 3. ROI par canal
+    channel_roi = df.groupby('Channel_Used')['ROI'].mean().reset_index()
+    channel_roi_fig = px.bar(
+        channel_roi,
+        x='Channel_Used',
+        y='ROI',
+        title='ROI moyen par canal',
+        color='ROI',
+        color_continuous_scale='Teal',
+        text_auto='.2f'
+    )
+    channel_roi_fig.update_layout(
+        xaxis_title='Canal',
+        yaxis_title='ROI moyen',
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        margin=dict(l=20, r=20, t=40, b=20),
+        height=350
+    )
+    
+    # 4. Relation entre coût d'acquisition et ROI
+    scatter_fig = px.scatter(
+        df,
+        x='Acquisition_Cost',
+        y='ROI',
+        color='Channel_Used',
+        size='Engagement_Score',
+        hover_data=['Conversion_Rate', 'CTR', 'CPC'],
+        title='Relation entre coût d\'acquisition et ROI'
+    )
+    scatter_fig.update_layout(
+        xaxis_title='Coût d\'acquisition',
+        yaxis_title='ROI',
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        margin=dict(l=20, r=20, t=40, b=20),
+        height=450
+    )
+    
+    # 5. Heatmap des corrélations
+    corr = df[['ROI', 'Conversion_Rate', 'Acquisition_Cost', 'Engagement_Score', 'CTR', 'CPC']].corr()
+    heatmap_fig = go.Figure(data=go.Heatmap(
+        z=corr.values,
+        x=corr.columns,
+        y=corr.columns,
+        colorscale='Teal',
+        zmin=-1, zmax=1
+    ))
+    heatmap_fig.update_layout(
+        title='Matrice de corrélation',
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        margin=dict(l=20, r=20, t=40, b=20),
+        height=400
+    )
+    
+    # 6. Taux de conversion par canal
+    conversion_by_channel = df.groupby('Campaign_Type')['Conversion_Rate'].mean().reset_index()
+    conversion_fig = px.bar(
+        conversion_by_channel,
+        x='Campaign_Type',
+        y='Conversion_Rate',
+        title='Taux de conversion moyen par compagne',
+        color='Conversion_Rate',
+        color_continuous_scale='Teal',
+        text_auto='.2f'
+    )
+    conversion_fig.update_layout(
+        xaxis_title='Canal',
+        yaxis_title='Taux de conversion (%)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        margin=dict(l=20, r=20, t=40, b=20),
+        height=350
+    )
+    
+    # 7. Radar chart pour comparer les canaux
+    # Préparation des données pour le radar chart
+    radar_df = df.groupby('Channel_Used')[['ROI', 'Conversion_Rate', 'Engagement_Score', 'CTR']].mean()
+    radar_df = radar_df.reset_index()
+    
+    # Normalisation des données pour le radar chart
+    for col in ['ROI', 'Conversion_Rate', 'Engagement_Score', 'CTR']:
+        max_val = radar_df[col].max()
+        radar_df[f'{col}_norm'] = radar_df[col] / max_val * 10
+    
+    # Création du radar chart
+    radar_fig = go.Figure()
+    
+    for channel in radar_df['Channel_Used'].unique():
+        channel_data = radar_df[radar_df['Channel_Used'] == channel]
+        radar_fig.add_trace(go.Scatterpolar(
+            r=[
+                channel_data['ROI_norm'].values[0],
+                channel_data['Conversion_Rate_norm'].values[0],
+                channel_data['Engagement_Score_norm'].values[0],
+                channel_data['CTR_norm'].values[0],
+                channel_data['ROI_norm'].values[0]  # Répéter le premier pour fermer le polygone
+            ],
+            theta=['ROI', 'Taux de conversion', 'Engagement', 'CTR', 'ROI'],
+            fill='toself',
+            name=f'Canal {channel}'
+        ))
+    
+    radar_fig.update_layout(
+        polar=dict(
+            radialaxis=dict(
+                visible=True,
+                range=[0, 10]
+            )
+        ),
+        title='Comparaison des performances par canal',
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        margin=dict(l=20, r=20, t=40, b=20),
+        height=450
+    )
+    
+    # 8. Tableau récapitulatif des données
+    table_data = df.describe().round(2).reset_index()
+    table_data.columns = ['Statistique'] + list(df.describe().columns)
+    
+    table_fig = go.Figure(data=[go.Table(
+        header=dict(
+            values=list(table_data.columns),
+            fill_color='#7AAEB5',
+            align='left',
+            font=dict(color='white', size=12)
+        ),
+        cells=dict(
+            values=[table_data[col] for col in table_data.columns],
+            fill_color='rgba(0,0,0,0)',
+            align='left'
+        )
+    )])
+    table_fig.update_layout(
+        title='Statistiques descriptives',
+        margin=dict(l=20, r=20, t=40, b=20),
+        height=400
+    )
+    
+    # Conversion des figures en HTML
+    plots = {
+        'roi_hist': opy.plot(roi_hist, auto_open=False, output_type='div'),
+        'campaign_roi': opy.plot(campaign_roi_fig, auto_open=False, output_type='div'),
+        'channel_roi': opy.plot(channel_roi_fig, auto_open=False, output_type='div'),
+        'scatter': opy.plot(scatter_fig, auto_open=False, output_type='div'),
+        'heatmap': opy.plot(heatmap_fig, auto_open=False, output_type='div'),
+        'conversion': opy.plot(conversion_fig, auto_open=False, output_type='div'),
+        'radar': opy.plot(radar_fig, auto_open=False, output_type='div'),
+        'table': opy.plot(table_fig, auto_open=False, output_type='div'),
+    }
+    
+    # Préparation des données pour le tableau
+    table_html = df.head(10).to_html(classes='table table-striped table-hover', index=False)
+    
+    # Contexte pour le template
+    context = {
+        'kpis': kpis,
+        'plots': plots,
+        'table_html': table_html,
+        'summary': df.describe().to_html(classes='table table-striped table-sm'),
+    }
+    
+    return render(request, 'dashboard.html', context)
 
 # Ignorer les avertissements spécifiques de version scikit-learn
 warnings.filterwarnings("ignore", category=InconsistentVersionWarning)
@@ -177,10 +417,7 @@ def predict(request):
     })
   
 
-# Vue pour la page de tableau de bord
-@login_required
-def dashboard(request):
-    return render(request, 'dashboard.html')
+
 
 # Vue pour la page de déconnexion
 def logout_view(request):
@@ -804,3 +1041,73 @@ def generate_recommendations(prediction, form_data):
     
     # Limiter à 5 recommandations maximum
     return recommendations[:5]
+
+
+# Load environment variables
+load_dotenv()
+
+@csrf_exempt
+def chatbot_response(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            user_input = data.get('user_input', '').strip()
+
+            if not user_input:
+                return JsonResponse({'error': 'Message vide.'}, status=400)
+
+            api_key = os.getenv("GEMINI_API_KEY")
+            if not api_key:
+                return JsonResponse({'error': 'Clé API manquante.'}, status=500)
+
+            # Initialize chat history with domain-specific context
+            if 'chat_history' not in request.session:
+                request.session['chat_history'] = [{
+                    "role": "user",
+                    "parts": [{
+                        "text": (
+                            "Tu es un assistant IA expert en marketing digital, "
+                            "spécialisé dans l’analyse des campagnes publicitaires, "
+                            "la segmentation de marché, l'optimisation des performances, "
+                            "et le conseil stratégique pour les entreprises."
+                        )
+                    }]
+                }]
+
+            # Append new user input
+            request.session['chat_history'].append({
+                "role": "user",
+                "parts": [{"text": user_input}]
+            })
+
+            # Send to Gemini API
+            prompt = {"contents": request.session['chat_history']}
+            headers = {"Content-Type": "application/json"}
+            api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
+
+            response = requests.post(api_url, headers=headers, json=prompt)
+
+            if response.status_code == 200:
+                response_data = response.json()
+                bot_reply = response_data['candidates'][0]['content']['parts'][0]['text']
+
+                # Save bot response in history
+                request.session['chat_history'].append({
+                    "role": "model",
+                    "parts": [{"text": bot_reply}]
+                })
+                request.session.modified = True
+
+                return JsonResponse({'response': bot_reply})
+            else:
+                return JsonResponse({
+                    'error': f"Erreur API Gemini : {response.status_code}, détails : {response.text}"
+                }, status=500)
+
+        except Exception as e:
+            return JsonResponse({'error': f'Erreur serveur : {str(e)}'}, status=500)
+
+    return JsonResponse({'error': 'Méthode non autorisée. Utilisez POST.'}, status=400)
+
+def chatbot_page(request):
+    return render(request, 'chatbot.html')

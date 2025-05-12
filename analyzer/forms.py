@@ -21,6 +21,7 @@ class PredictionForm(forms.Form):
         ('Instagram', 'Instagram'),
         ('Website', 'Website'),
         ('YouTube', 'YouTube'),
+        ('Email', 'Email'),
         
     ]
 

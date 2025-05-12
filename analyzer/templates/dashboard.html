@@ -2,933 +2,1055 @@
 
 {% load static %}
 
-{% block title %}Tableau de bord - MARKETMIND{% endblock %}
+{% block title %}MARKETMIND - Analyse et Prédiction des Performances Marketing{% endblock %}
 
 {% block extra_css %}
-<style>
-    /* Variables - Inspirées par les couleurs du logo MARKETMIND */
-    :root {
-        --primary-color: #7AAEB5;
-        --secondary-color: #9ECBD1;
-        --accent-color: #5D8A91;
-        --dark-color: #334155;
-        --light-color: #F8FAFC;
-        --gray-color: #64748B;
-        --border-color: #E2E8F0;
+    <style>
+        /* Variables - Conserve les couleurs originales */
+        :root {
+            --primary-color: #7AAEB5;
+            --secondary-color: #9ECBD1;
+            --accent-color: #5D8A91;
+            --dark-color: #334155;
+            --light-color: #F8FAFC;
+            --gray-color: #64748B;
+            --border-color: #E2E8F0;
+            
+            --primary-gradient: linear-gradient(135deg, #7AAEB5, #9ECBD1);
+            --secondary-gradient: linear-gradient(135deg, #F0F4FD, #E0F2F4);
+            --card-shadow: 0 10px 30px rgba(122, 174, 181, 0.15);
+            --hover-shadow: 0 15px 35px rgba(122, 174, 181, 0.25);
+            --transition-medium: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
         
-        --primary-gradient: linear-gradient(135deg, #7AAEB5, #9ECBD1);
-        --secondary-gradient: linear-gradient(135deg, #F0F4FD, #E0F2F4);
-        --card-shadow: 0 10px 30px rgba(122, 174, 181, 0.15);
-        --hover_shadow: 0 15px 35px rgba(122, 174, 181, 0.25);
-        --transition_slow: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        --transition_medium: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        --transition_fast: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-
-    /* Animations */
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
+        /* Reset et styles de base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        to {
-            opacity: 1;
-            transform: translateY(0);
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--dark-color);
+            background-color: #f5f8fa;
+            line-height: 1.5;
         }
-    }
-
-    @keyframes fadeInRight {
-        from {
-            opacity: 0;
-            transform: translateX(-30px);
+        
+        .container {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
         }
-        to {
-            opacity: 1;
-            transform: translateX(0);
+        
+        /* Header */
+        .header {
+            background-color: white;
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-    }
-
-    @keyframes fadeInLeft {
-        from {
-            opacity: 0;
-            transform: translateX(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-
-    @keyframes pulse {
-        0% {
-            transform: scale(1);
-        }
-        50% {
-            transform: scale(1.05);
-        }
-        100% {
-            transform: scale(1);
-        }
-    }
-
-    @keyframes float {
-        0% {
-            transform: translateY(0px);
-        }
-        50% {
-            transform: translateY(-10px);
-        }
-        100% {
-            transform: translateY(0px);
-        }
-    }
-
-    /* Welcome Banner */
-    .welcome-banner {
-        background: var(--secondary-gradient);
-        border-radius: 20px;
-        padding: 2.5rem;
-        margin-bottom: 2.5rem;
-        margin-top: 5rem;
-        box-shadow: var(--card-shadow);
-        position: relative;
-        overflow: hidden;
-        border: 1px solid rgba(226, 232, 240, 0.8);
-        animation: fadeInUp 1s ease-out;
-    }
-
-    .welcome-banner::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%237AAEB5' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
-        opacity: 0.5;
-    }
-
-    .welcome-content {
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-        position: relative;
-        z-index: 1;
-    }
-
-    @media (min-width: 768px) {
-        .welcome-content {
-            flex-direction: row;
+        
+        .header-content {
+            display: flex;
+            align-items: center;
             justify-content: space-between;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 1rem;
             align-items: center;
         }
-    }
-
-    .welcome-title {
-        font-size: 2.25rem;
-        font-weight: 700;
-        margin-bottom: 0.75rem;
-        background: linear-gradient(to right, var(--accent-color), var(--primary-color));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        text-fill-color: transparent;
-    }
-
-    .welcome-text {
-        color: var(--gray-color);
-        font-weight: 400;
-        font-size: 1.1rem;
-        line-height: 1.6;
-    }
-
-    .btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0.85rem 1.75rem;
-        border-radius: 50px;
-        font-weight: 600;
-        transition: var(--transition_medium);
-        cursor: pointer;
-        border: none;
-        font-size: 1rem;
-        position: relative;
-        overflow: hidden;
-        z-index: 1;
-    }
-
-    .btn::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(255, 255, 255, 0.1);
-        transform: translateX(-100%);
-        transition: var(--transition_medium);
-        z-index: -1;
-    }
-
-    .btn:hover::before {
-        transform: translateX(0);
-    }
-
-    .btn-primary {
-        background: var(--primary-gradient);
-        color: white;
-        box-shadow: 0 4px 15px rgba(122, 174, 181, 0.3);
-    }
-
-    .btn-primary:hover {
-        box-shadow: 0 8px 25px rgba(122, 174, 181, 0.4);
-        transform: translateY(-3px);
-    }
-
-    .btn-primary a {
-        color: white;
-        text-decoration: none;
-    }
-
-    .btn i {
-        margin-right: 10px;
-        font-size: 1.1rem;
-    }
-
-    /* Stats Grid */
-    .stats-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-        margin-bottom: 2.5rem;
-    }
-
-    @media (min-width: 640px) {
-        .stats-grid {
-            grid-template-columns: repeat(2, 1fr);
+        
+        /* Welcome Banner */
+        .welcome-banner {
+            background: var(--secondary-gradient);
+            border-radius: 1rem;
+            padding: 2.5rem;
+            margin: 2rem 0;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            animation: fadeInUp 0.8s ease-out;
         }
-    }
-
-    @media (min-width: 1024px) {
-        .stats-grid {
-            grid-template-columns: repeat(4, 1fr);
+        
+        .welcome-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%237AAEB5' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.5;
         }
-    }
-
-    .stat-card {
-        background-color: white;
-        border-radius: 20px;
-        padding: 1.75rem;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        box-shadow: var(--card-shadow);
-        transition: var(--transition_medium);
-        border: 1px solid rgba(226, 232, 240, 0.5);
-        animation: fadeInUp 1s ease-out;
-    }
-
-    .stat-card:nth-child(2) {
-        animation-delay: 0.2s;
-    }
-
-    .stat-card:nth-child(3) {
-        animation-delay: 0.4s;
-    }
-
-    .stat-card:nth-child(4) {
-        animation-delay: 0.6s;
-    }
-
-    .stat-card:hover {
-        transform: translateY(-10px);
-        box-shadow: var(--hover_shadow);
-        border-color: rgba(122, 174, 181, 0.2);
-    }
-
-    .stat-icon {
-        width: 3.5rem;
-        height: 3.5rem;
-        border-radius: 1rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 1.25rem;
-        font-size: 1.5rem;
-        transition: var(--transition_medium);
-    }
-
-    .stat-card:hover .stat-icon {
-        transform: scale(1.1);
-    }
-
-    .stat-icon-primary {
-        background-color: rgba(122, 174, 181, 0.1);
-        color: var(--primary-color);
-    }
-
-    .stat-icon-secondary {
-        background-color: rgba(158, 203, 209, 0.1);
-        color: var(--secondary-color);
-    }
-
-    .stat-icon-accent {
-        background-color: rgba(93, 138, 145, 0.1);
-        color: var(--accent-color);
-    }
-
-    .stat-value {
-        font-size: 2.25rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-        background: linear-gradient(to right, var(--accent-color), var(--primary-color));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        text-fill-color: transparent;
-    }
-
-    .stat-label {
-        font-size: 1rem;
-        color: var(--gray-color);
-        font-weight: 500;
-    }
-
-    /* Dashboard Grid */
-    .dashboard-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 1.75rem;
-        margin-bottom: 2.5rem;
-    }
-
-    @media (min-width: 1024px) {
-        .dashboard-grid {
-            grid-template-columns: 5fr 3fr;
+        
+        .welcome-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            position: relative;
+            z-index: 1;
         }
-    }
-
-    .card {
-        background-color: white;
-        border-radius: 20px;
-        box-shadow: var(--card-shadow);
-        overflow: hidden;
-        border: 1px solid rgba(226, 232, 240, 0.5);
-        transition: var(--transition_medium);
-        animation: fadeInUp 1s ease-out;
-    }
-
-    .card:hover {
-        box-shadow: var(--hover_shadow);
-        border-color: rgba(122, 174, 181, 0.2);
-    }
-
-    .card-header {
-        padding: 1.25rem 1.5rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-weight: 600;
-        border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-    }
-
-    .card-header h3 {
-        font-size: 1.1rem;
-        letter-spacing: -0.3px;
-        color: var(--primary-color);
-    }
-
-    .card-body {
-        padding: 1.5rem;
-    }
-
-    .card-body-no-padding {
-        padding: 0;
-    }
-
-    .card-footer {
-        padding: 1rem;
-        text-align: center;
-        background-color: #f8fafc;
-        border-top: 1px solid rgba(226, 232, 240, 0.8);
-    }
-
-    .card-footer a {
-        color: var(--primary-color);
-        font-size: 0.95rem;
-        font-weight: 500;
-        transition: color 0.3s;
-    }
-
-    .card-footer a:hover {
-        color: var(--accent-color);
-    }
-
-    /* Activity Items */
-    .activity-item {
-        display: flex;
-        align-items: center;
-        padding: 1.25rem 1.5rem;
-        border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-        transition: background-color 0.3s;
-    }
-
-    .activity-item:hover {
-        background-color: #f8fafc;
-    }
-
-    .activity-item:last-child {
-        border-bottom: none;
-    }
-
-    .activity-icon {
-        width: 2.75rem;
-        height: 2.75rem;
-        border-radius: 0.75rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-right: 1.25rem;
-        transition: var(--transition_medium);
-    }
-
-    .activity-item:hover .activity-icon {
-        transform: scale(1.1);
-    }
-
-    .activity-icon-primary {
-        background-color: rgba(122, 174, 181, 0.1);
-        color: var(--primary-color);
-    }
-
-    .activity-icon-secondary {
-        background-color: rgba(158, 203, 209, 0.1);
-        color: var(--secondary-color);
-    }
-
-    .activity-icon-accent {
-        background-color: rgba(93, 138, 145, 0.1);
-        color: var(--accent-color);
-    }
-
-    .activity-content h4 {
-        font-size: 0.95rem;
-        font-weight: 600;
-        margin-bottom: 0.25rem;
-        color: var(--dark-color);
-    }
-
-    .activity-content p {
-        font-size: 0.85rem;
-        color: var(--gray-color);
-    }
-
-    /* Prediction Items */
-    .prediction-item {
-        display: block;
-        padding: 1.25rem 1.5rem;
-        border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-        transition: background-color 0.3s;
-    }
-
-    .prediction-item:last-child {
-        border-bottom: none;
-    }
-
-    .prediction-item:hover {
-        background-color: #f8fafc;
-    }
-
-    .prediction-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 0.5rem;
-    }
-
-    .prediction-title {
-        font-size: 0.95rem;
-        font-weight: 600;
-        color: var(--dark-color);
-    }
-
-    .badge {
-        padding: 0.35rem 0.75rem;
-        border-radius: 0.5rem;
-        font-size: 0.75rem;
-        font-weight: 600;
-    }
-
-    .badge-success {
-        background-color: rgba(16, 185, 129, 0.1);
-        color: #10b981;
-    }
-
-    .badge-warning {
-        background-color: rgba(217, 119, 6, 0.1);
-        color: #d97706;
-    }
-
-    .badge-danger {
-        background-color: rgba(220, 38, 38, 0.1);
-        color: #dc2626;
-    }
-
-    .prediction-channel {
-        font-size: 0.85rem;
-        color: var(--gray-color);
-    }
-
-    /* Charts */
-    .chart-container {
-        height: 300px;
-        position: relative;
-    }
-
-    /* Bottom Grid */
-    .bottom-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 1.75rem;
-        margin-top: 1.75rem;
-    }
-
-    @media (min-width: 1024px) {
-        .bottom-grid {
-            grid-template-columns: repeat(3, 1fr);
+        
+        @media (min-width: 768px) {
+            .welcome-content {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
         }
-    }
-
-    /* Dropdown */
-    .dropdown {
-        position: relative;
-    }
-
-    .dropdown-toggle {
-        display: flex;
-        align-items: center;
-        cursor: pointer;
-        font-size: 0.9rem;
-        padding: 0.5rem 0.75rem;
-        border-radius: 0.5rem;
-        background-color: white;
-        border: 1px solid rgba(226, 232, 240, 0.8);
-        color: var(--gray-color);
-        transition: all 0.3s;
-    }
-
-    .dropdown-toggle:hover {
-        border-color: var(--primary-color);
-        color: var(--primary-color);
-    }
-
-    .dropdown-toggle i {
-        margin-left: 0.5rem;
-        font-size: 0.75rem;
-    }
-
-    /* Animation Classes */
-    .animate-fadeInUp {
-        animation: fadeInUp 1s ease-out;
-    }
-
-    .animate-fadeInRight {
-        animation: fadeInRight 1s ease-out;
-    }
-
-    .animate-fadeInLeft {
-        animation: fadeInLeft 1s ease-out;
-    }
-
-    .animate-pulse {
-        animation: pulse 3s infinite;
-    }
-
-    .animate-float {
-        animation: float 6s ease-in-out infinite;
-    }
-
-    /* Shimmer effect for buttons */
-    .btn-shimmer {
-        position: relative;
-        overflow: hidden;
-    }
-
-    .btn-shimmer::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        background: linear-gradient(
-            to right,
-            rgba(255, 255, 255, 0) 0%,
-            rgba(255, 255, 255, 0.3) 50%,
-            rgba(255, 255, 255, 0) 100%
-        );
-        background-size: 200% 100%;
-        animation: shimmer 2s infinite;
-        transform: skewX(-20deg);
-    }
-
-    @keyframes shimmer {
-        0% {
-            background-position: -1000px 0;
+        
+        .welcome-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.75rem;
+            background: linear-gradient(to right, var(--accent-color), var(--primary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+            letter-spacing: -0.02em;
         }
-        100% {
-            background-position: 1000px 0;
+        
+        .welcome-text {
+            color: var(--gray-color);
+            font-weight: 400;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            max-width: 36rem;
         }
-    }
-</style>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        @media (min-width: 640px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .kpi-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+        }
+        
+        .kpi-card {
+            background-color: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition-medium);
+            border: 1px solid var(--border-color);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+        
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+        
+        .kpi-card:nth-child(1) { animation-delay: 0.1s; }
+        .kpi-card:nth-child(2) { animation-delay: 0.2s; }
+        .kpi-card:nth-child(3) { animation-delay: 0.3s; }
+        .kpi-card:nth-child(4) { animation-delay: 0.4s; }
+        .kpi-card:nth-child(5) { animation-delay: 0.5s; }
+        .kpi-card:nth-child(6) { animation-delay: 0.6s; }
+        
+        .kpi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .kpi-title {
+            font-size: 0.875rem;
+            color: var(--gray-color);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .kpi-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.75rem;
+            background: var(--secondary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 1.25rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .kpi-card:hover .kpi-icon {
+            transform: scale(1.1);
+        }
+        
+        .kpi-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Tabs */
+        .tabs {
+            width: 80rem;
+            margin-bottom: 2rem;
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+        }
+        
+        .tab-list {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            background-color: #f8fafc;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        
+        .tab-trigger {
+            padding: 1rem 1.5rem;
+            font-weight: 500;
+            color: var(--gray-color);
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            transition: color 0.3s;
+            position: relative;
+        }
+        
+        .tab-trigger:hover {
+            color: var(--primary-color);
+        }
+        
+        .tab-trigger.active {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .tab-trigger.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+        
+        .tab-content {
+            padding: 1.5rem;
+        }
+        
+        .tab-panel {
+            display: none;
+        }
+        
+        .tab-panel.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        /* Chart Container */
+        .chart-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        @media (min-width: 768px) {
+            .chart-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        .chart-container {
+            background-color: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+            transition: var(--transition-medium);
+        }
+        
+        
+        .chart-container:hover {
+            box-shadow: var(--hover-shadow);
+        }
+        
+        .chart-header {
+            margin-bottom: 1rem;
+        }
+        
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 0.25rem;
+        }
+        
+        .chart-description {
+            font-size: 0.875rem;
+            color: var(--gray-color);
+        }
+        
+        /* Table */
+        .table-container {
+            background-color: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+            overflow-x: auto;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .table th {
+            background-color: var(--light-color);
+            color: var(--accent-color);
+            font-weight: 600;
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        .table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+        
+        .table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .table tr:hover td {
+            background-color: rgba(248, 250, 252, 0.5);
+        }
+        
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: var(--transition-medium);
+            cursor: pointer;
+            border: none;
+            font-size: 0.875rem;
+        }
+        
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: 0 4px 15px rgba(122, 174, 181, 0.3);
+        }
+        
+        .btn-primary:hover {
+            box-shadow: 0 8px 25px rgba(122, 174, 181, 0.4);
+            transform: translateY(-3px);
+        }
+        
+        .btn-outline {
+            background: white;
+            color: var(--gray-color);
+            border: 1px solid var(--border-color);
+        }
+        
+        .btn-outline:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .btn i {
+            margin-right: 0.5rem;
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        /* Utilities */
+        .flex {
+            display: flex;
+        }
+        
+        .items-center {
+            align-items: center;
+        }
+        
+        .justify-between {
+            justify-content: space-between;
+        }
+        
+        .gap-2 {
+            gap: 0.5rem;
+        }
+        
+        .gap-4 {
+            gap: 1rem;
+        }
+        
+        .mb-1 {
+            margin-bottom: 0.25rem;
+        }
+        
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+        
+        .mb-4 {
+            margin-bottom: 1rem;
+        }
+        
+        .mb-6 {
+            margin-bottom: 1.5rem;
+        }
+        
+        .ml-auto {
+            margin-left: auto;
+        }
+        
+        .text-sm {
+            font-size: 0.875rem;
+        }
+        
+        .text-xs {
+            font-size: 0.75rem;
+        }
+        
+        .font-medium {
+            font-weight: 500;
+        }
+        
+        .font-semibold {
+            font-weight: 600;
+        }
+        
+        .text-right {
+            text-align: right;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        /* Plotly Customizations */
+        .js-plotly-plot .plotly .modebar {
+            right: 10px !important;
+        }
+        
+        /* Responsive adjustments for plotly charts */
+        .js-plotly-plot {
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* User profile */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .user-avatar {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 9999px;
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            color: var(--dark-color);
+            font-size: 0.875rem;
+        }
+        
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--gray-color);
+        }
+        
+        /* Date selector */
+        .date-selector {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: white;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            color: var(--gray-color);
+            cursor: pointer;
+        }
+        
+        .date-selector:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        /* Loading indicator */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 300px;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(122, 174, 181, 0.1);
+            border-left-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* Légende pour les mappings */
+        .mapping-legend {
+            background-color: var(--light-color);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        .mapping-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--accent-color);
+        }
+        
+        .mapping-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .mapping-item {
+            background-color: white;
+            border-radius: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .mapping-key {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
-<!-- Main Content -->
-<div class="main-content">
-    <div class="container">
-        <!-- Welcome Banner -->
-        <div class="welcome-banner">
-            <div class="welcome-content">
-                <div>
-                    <h2 class="welcome-title">Bienvenue, {{ user.username|default:"Utilisateur" }}!</h2>
-                    <p class="welcome-text">Voici votre tableau de bord personnalisé pour suivre et analyser vos campagnes marketing.</p>
-                </div>
-                <div>
-                    <button class="btn btn-primary btn-shimmer">
-                        <i class="fas fa-chart-line"></i>
-                        <a href="{% url 'predict' %}">Nouvelle Prédiction</a>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Stats Grid -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon stat-icon-primary">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <div class="stat-value">5</div>
-                <div class="stat-label">Prédictions</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon stat-icon-secondary">
-                    <i class="fas fa-bullseye"></i>
-                </div>
-                <div class="stat-value">4.2</div>
-                <div class="stat-label">ROI moyen</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon stat-icon-accent">
-                    <i class="fas fa-tags"></i>
-                </div>
-                <div class="stat-value">3</div>
-                <div class="stat-label">Campagnes</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon stat-icon-primary">
-                    <i class="fas fa-users"></i>
-                </div>
-                <div class="stat-value">85%</div>
-                <div class="stat-label">Précision</div>
-            </div>
-        </div>
-
-        <!-- Dashboard Grid -->
-        <div class="dashboard-grid">
-            <!-- Performance Chart -->
-            <div class="card animate-fadeInRight">
-                <div class="card-header">
-                    <h3>Performance des campagnes</h3>
-                    <div class="dropdown">
-                        <button class="dropdown-toggle">
-                            Ce mois
-                            <i class="fas fa-chevron-down"></i>
+    
+    <!-- Main Content -->
+    
+         <div class="container">
+            <!-- Welcome Banner -->
+            <div class="welcome-banner">
+                <div class="welcome-content">
+                    <div>
+                        <h2 class="welcome-title">Bienvenue, {{ user.username|default:"Utilisateur" }}!</h2>
+                        <p class="welcome-text">Voici votre tableau de bord personnalisé pour suivre et analyser vos campagnes marketing.</p>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-chart-line"></i>
+                            Nouvelle Prédiction
                         </button>
                     </div>
                 </div>
-                <div class="card-body">
-                    <div class="chart-container">
-                        <canvas id="performanceChart"></canvas>
-                    </div>
+            </div>
+            
+            <!-- Légende des mappings -->
+            <div class="mapping-legend">
+                <div class="mapping-title">Types de Campagne</div>
+                <div class="mapping-list">
+                    <div class="mapping-item"><span class="mapping-key">0:</span> Email</div>
+                    <div class="mapping-item"><span class="mapping-key">1:</span> Influencer</div>
+                    <div class="mapping-item"><span class="mapping-key">2:</span> Display</div>
+                    <div class="mapping-item"><span class="mapping-key">3:</span> Search</div>
+                    <div class="mapping-item"><span class="mapping-key">4:</span> Social Media</div>
                 </div>
             </div>
-
-            <!-- Recent Activity -->
-            <div class="card animate-fadeInLeft">
-                <div class="card-header">
-                    <h3>Activité récente</h3>
+            
+            <div class="mapping-legend">
+                <div class="mapping-title">Canaux Utilisés</div>
+                <div class="mapping-list">
+                    <div class="mapping-item"><span class="mapping-key">0:</span> Google Ads</div>
+                    <div class="mapping-item"><span class="mapping-key">1:</span> YouTube</div>
+                    <div class="mapping-item"><span class="mapping-key">2:</span> Instagram</div>
+                    <div class="mapping-item"><span class="mapping-key">3:</span> Website</div>
+                    <div class="mapping-item"><span class="mapping-key">4:</span> Facebook</div>
+                    <div class="mapping-item"><span class="mapping-key">5:</span> Email</div>
                 </div>
-                <div class="card-body card-body-no-padding">
-                    <div class="activity-item">
-                        <div class="activity-icon activity-icon-primary">
-                            <i class="fas fa-chart-pie"></i>
-                        </div>
-                        <div class="activity-content">
-                            <h4>Prédiction effectuée</h4>
-                            <p>Il y a 2 heures</p>
-                        </div>
-                    </div>
-                    <div class="activity-item">
-                        <div class="activity-icon activity-icon-secondary">
-                            <i class="fas fa-check"></i>
-                        </div>
-                        <div class="activity-content">
-                            <h4>Campagne Email terminée</h4>
-                            <p>Hier à 14:30</p>
+            </div>
+            
+            <!-- KPI Cards -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-title">Campagnes</div>
+                        <div class="kpi-icon">
+                            <i class="fas fa-bullseye"></i>
                         </div>
                     </div>
-                    <div class="activity-item">
-                        <div class="activity-icon activity-icon-accent">
-                            <i class="fas fa-plus"></i>
-                        </div>
-                        <div class="activity-content">
-                            <h4>Nouvelle campagne créée</h4>
-                            <p>Il y a 3 jours</p>
-                        </div>
-                    </div>
-                    <div class="activity-item">
-                        <div class="activity-icon activity-icon-primary">
-                            <i class="fas fa-user-edit"></i>
-                        </div>
-                        <div class="activity-content">
-                            <h4>Profil mis à jour</h4>
-                            <p>Il y a 5 jours</p>
-                        </div>
-                    </div>
+                    <div class="kpi-value">{{ kpis.total_campaigns }}</div>
                 </div>
-                <div class="card-footer">
-                    <a href="#">Voir toutes les activités</a>
+                
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-title">ROI moyen</div>
+                        <div class="kpi-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-value">{{ kpis.avg_roi }}</div>
+                </div>
+                
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-title">ROI max</div>
+                        <div class="kpi-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-value">{{ kpis.max_roi }}</div>
+                </div>
+                
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-title">Conversion</div>
+                        <div class="kpi-icon">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-value">{{ kpis.avg_conversion }}%</div>
+                </div>
+                
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-title">Coût total</div>
+                        <div class="kpi-icon">
+                            <i class="fas fa-euro-sign"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-value">{{ kpis.total_cost }}€</div>
+                </div>
+                
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-title">CPC moyen</div>
+                        <div class="kpi-icon">
+                            <i class="fas fa-mouse-pointer"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-value">{{ kpis.avg_cpc }}€</div>
+                </div>
+            </div>
+            
+            <!-- Tabs -->
+            <div class="tabs">
+                <div class="tab-list">
+                    <button class="tab-trigger active" data-tab="overview">Vue d'ensemble</button>
+                    <button class="tab-trigger" data-tab="channels">Canaux</button>
+                    <button class="tab-trigger" data-tab="campaigns">Campagnes</button>
+                    <button class="tab-trigger" data-tab="data">Données</button>
+                </div>
+                
+                <div class="tab-content">
+                    <!-- Vue d'ensemble -->
+                    <div class="tab-panel active" id="overview">
+                        <div class="chart-grid">
+                            <div class="chart-container">
+                                <div class="chart-header">
+                                    <h3 class="chart-title">Distribution du ROI</h3>
+                                    <p class="chart-description">Répartition des campagnes par ROI</p>
+                                </div>
+                                <div class="chart-content">
+                                    {{ plots.roi_hist|safe }}
+                                </div>
+                            </div>
+                            
+                            <div class="chart-container">
+                                <div class="chart-header">
+                                    <h3 class="chart-title">Relation Coût / ROI</h3>
+                                    <p class="chart-description">Analyse de l'efficacité des investissements</p>
+                                </div>
+                                <div class="chart-content">
+                                    {{ plots.scatter|safe }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3 class="chart-title">Matrice de Corrélation</h3>
+                                <p class="chart-description">Corrélations entre les métriques clés</p>
+                            </div>
+                            <div class="chart-content">
+                                {{ plots.heatmap|safe }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Canaux -->
+                    <div class="tab-panel" id="channels">
+                        <div class="chart-grid">
+                            <div class="chart-container">
+                                <div class="chart-header">
+                                    <h3 class="chart-title">ROI par Canal</h3>
+                                    <p class="chart-description">Performance des différents canaux</p>
+                                </div>
+                                <div class="chart-content">
+                                    {{ plots.channel_roi|safe }}
+                                </div>
+                            </div>
+                            
+                            <div class="chart-container">
+                                <div class="chart-header">
+                                    <h3 class="chart-title">Taux de Conversion par Type de compagne</h3>
+                                    <p class="chart-description">Efficacité de type de compagne pour la conversion</p>
+                                </div>
+                                <div class="chart-content">
+                                    {{ plots.conversion|safe }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3 class="chart-title">Comparaison des Canaux</h3>
+                                <p class="chart-description">Analyse multi-critères des canaux marketing</p>
+                            </div>
+                            <div class="chart-content">
+                                {{ plots.radar|safe }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Campagnes -->
+                    <div class="tab-panel" id="campaigns">
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3 class="chart-title">ROI par Type de Campagne</h3>
+                                <p class="chart-description">Performance des différents types de campagnes</p>
+                            </div>
+                            <div class="chart-content">
+                                {{ plots.campaign_roi|safe }}
+                            </div>
+                        </div>
+                        
+                        <div class="chart-grid">
+                            <div class="chart-container">
+                                <div class="chart-header">
+                                    <h3 class="chart-title">Analyse des Campagnes</h3>
+                                    <p class="chart-description">Comparaison détaillée des performances</p>
+                                </div>
+                                <div class="chart-content">
+                                    <!-- Placeholder for additional campaign analysis -->
+                                    <div class="loading">
+                                        <div class="loading-spinner"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="chart-container">
+                                <div class="chart-header">
+                                    <h3 class="chart-title">Tendances des Campagnes</h3>
+                                    <p class="chart-description">Évolution des performances dans le temps</p>
+                                </div>
+                                <div class="chart-content">
+                                    <!-- Placeholder for campaign trends -->
+                                    <div class="loading">
+                                        <div class="loading-spinner"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Données -->
+                    <div class="tab-panel" id="data">
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3 class="chart-title">Statistiques Descriptives</h3>
+                                <p class="chart-description">Aperçu statistique des données</p>
+                            </div>
+                            <div class="chart-content">
+                                {{ plots.table|safe }}
+                            </div>
+                        </div>
+                        
+                        <div class="table-container">
+                            <div class="chart-header">
+                                <h3 class="chart-title">Données Brutes</h3>
+                                <p class="chart-description">Aperçu des données de campagne</p>
+                            </div>
+                            <div id="table-data">
+                                {{ table_html|safe }}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <!-- Bottom Grid -->
-        <div class="bottom-grid">
-            <!-- Campaign Distribution -->
-            <div class="card animate-fadeInUp" style="animation-delay: 0.2s">
-                <div class="card-header">
-                    <h3>Distribution des campagnes</h3>
-                </div>
-                <div class="card-body">
-                    <div class="chart-container">
-                        <canvas id="campaignDistribution"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Channel Performance -->
-            <div class="card animate-fadeInUp" style="animation-delay: 0.4s">
-                <div class="card-header">
-                    <h3>Performance des canaux</h3>
-                </div>
-                <div class="card-body">
-                    <div class="chart-container">
-                        <canvas id="channelPerformance"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recent Predictions -->
-            <div class="card animate-fadeInUp" style="animation-delay: 0.6s">
-                <div class="card-header">
-                    <h3>Prédictions récentes</h3>
-                </div>
-                <div class="card-body card-body-no-padding">
-                    <a href="#" class="prediction-item">
-                        <div class="prediction-header">
-                            <h4 class="prediction-title">Campagne Email</h4>
-                            <span class="badge badge-success">ROI: 4.8</span>
-                        </div>
-                        <p class="prediction-channel">Canal: Email Marketing</p>
-                    </a>
-                    <a href="#" class="prediction-item">
-                        <div class="prediction-header">
-                            <h4 class="prediction-title">Campagne Social Media</h4>
-                            <span class="badge badge-warning">ROI: 3.2</span>
-                        </div>
-                        <p class="prediction-channel">Canal: Facebook</p>
-                    </a>
-                    <a href="#" class="prediction-item">
-                        <div class="prediction-header">
-                            <h4 class="prediction-title">Campagne PPC</h4>
-                            <span class="badge badge-danger">ROI: 1.5</span>
-                        </div>
-                        <p class="prediction-channel">Canal: Google Ads</p>
-                    </a>
-                    <a href="#" class="prediction-item">
-                        <div class="prediction-header">
-                            <h4 class="prediction-title">Campagne Content</h4>
-                            <span class="badge badge-success">ROI: 5.1</span>
-                        </div>
-                        <p class="prediction-channel">Canal: Blog</p>
-                    </a>
-                </div>
-                <div class="card-footer">
-                    <a href="{% url 'predict' %}">Nouvelle prédiction</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
+    
+    {% endblock %}
 
 {% block extra_js %}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Performance Chart
-        const performanceCtx = document.getElementById('performanceChart').getContext('2d');
-        const performanceChart = new Chart(performanceCtx, {
-            type: 'line',
-            data: {
-                labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'],
-                datasets: [{
-                    label: 'ROI',
-                    data: [3.2, 2.8, 3.5, 4.1, 3.9, 4.5, 4.8, 4.2, 3.8, 4.0, 4.3, 4.7],
-                    borderColor: '#7AAEB5',
-                    backgroundColor: 'rgba(122, 174, 181, 0.1)',
-                    tension: 0.4,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            drawBorder: false
-                        }
-                    },
-                    x: {
-                        grid: {
-                            display: false
-                        }
-                    }
-                }
-            }
-        });
+    <script>
+         // Définition des mappings pour les valeurs encodées
+        const campaignTypeMapping = {
+            '0': 'Email',
+            '1': 'Influencer',
+            '2': 'Display',
+            '3': 'Search',
+            '4': 'Social Media'
+        };
         
-        // Campaign Distribution Chart
-        const campaignCtx = document.getElementById('campaignDistribution').getContext('2d');
-        const campaignChart = new Chart(campaignCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Email', 'Social Media', 'PPC', 'Content', 'Affiliate'],
-                datasets: [{
-                    data: [35, 25, 20, 15, 5],
-                    backgroundColor: [
-                        '#7AAEB5',
-                        '#9ECBD1',
-                        '#5D8A91',
-                        '#10b981',
-                        '#e11d48'
-                    ],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            boxWidth: 12,
-                            font: {
-                                size: 11
+        const channelUsedMapping = {
+            '0': 'Google Ads',
+            '1': 'YouTube',
+            '2': 'Instagram',
+            '3': 'Website',
+            '4': 'Facebook',
+            '5': 'Email'
+        };
+        
+        // Fonction pour décoder les valeurs dans les graphiques Plotly
+        function decodePlotlyCharts() {
+            // Sélectionner tous les graphiques Plotly
+            const plotlyCharts = document.querySelectorAll('.js-plotly-plot');
+            
+            plotlyCharts.forEach(chart => {
+                // Vérifier si le graphique contient des données de Campaign_Type ou Channel_Used
+                if (chart.data && chart.data.length > 0) {
+                    // Pour chaque trace dans le graphique
+                    for (let i = 0; i < chart.data.length; i++) {
+                        const trace = chart.data[i];
+                        
+                        // Remplacer les valeurs dans les axes x
+                        if (trace.x && Array.isArray(trace.x)) {
+                            // Vérifier si l'axe x contient des valeurs de Campaign_Type
+                            if (trace.xaxis && trace.xaxis.title && trace.xaxis.title.text === 'Campaign_Type') {
+                                trace.x = trace.x.map(val => campaignTypeMapping[val] || val);
+                            }
+                            // Vérifier si l'axe x contient des valeurs de Channel_Used
+                            else if (trace.xaxis && trace.xaxis.title && trace.xaxis.title.text === 'Channel_Used') {
+                                trace.x = trace.x.map(val => channelUsedMapping[val] || val);
                             }
                         }
-                    }
-                }
-            }
-        });
-        
-        // Channel Performance Chart
-        const channelCtx = document.getElementById('channelPerformance').getContext('2d');
-        const channelChart = new Chart(channelCtx, {
-            type: 'bar',
-            data: {
-                labels: ['Email', 'Facebook', 'Instagram', 'Google', 'LinkedIn'],
-                datasets: [{
-                    label: 'ROI moyen',
-                    data: [4.8, 3.2, 2.9, 3.7, 4.1],
-                    backgroundColor: [
-                        'rgba(122, 174, 181, 0.7)',
-                        'rgba(158, 203, 209, 0.7)',
-                        'rgba(93, 138, 145, 0.7)',
-                        'rgba(16, 185, 129, 0.7)',
-                        'rgba(225, 29, 72, 0.7)'
-                    ],
-                    borderWidth: 0,
-                    borderRadius: 5
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            drawBorder: false
+                        
+                        // Remplacer les valeurs dans les axes y
+                        if (trace.y && Array.isArray(trace.y)) {
+                            // Vérifier si l'axe y contient des valeurs de Campaign_Type
+                            if (trace.yaxis && trace.yaxis.title && trace.yaxis.title.text === 'Campaign_Type') {
+                                trace.y = trace.y.map(val => campaignTypeMapping[val] || val);
+                            }
+                            // Vérifier si l'axe y contient des valeurs de Channel_Used
+                            else if (trace.yaxis && trace.yaxis.title && trace.yaxis.title.text === 'Channel_Used') {
+                                trace.y = trace.y.map(val => channelUsedMapping[val] || val);
+                            }
                         }
-                    },
-                    x: {
-                        grid: {
-                            display: false
+                        
+                        // Remplacer les valeurs dans les textes de hover
+                        if (trace.text && Array.isArray(trace.text)) {
+                            trace.text = trace.text.map(text => {
+                                if (typeof text === 'string') {
+                                    // Remplacer Campaign_Type
+                                    Object.keys(campaignTypeMapping).forEach(key => {
+                                        const regex = new RegExp(`Campaign_Type: ${key}\\b`, 'g');
+                                        text = text.replace(regex, `Campaign_Type: ${campaignTypeMapping[key]}`);
+                                    });
+                                    
+                                    // Remplacer Channel_Used
+                                    Object.keys(channelUsedMapping).forEach(key => {
+                                        const regex = new RegExp(`Channel_Used: ${key}\\b`, 'g');
+                                        text = text.replace(regex, `Channel_Used: ${channelUsedMapping[key]}`);
+                                    });
+                                }
+                                return text;
+                            });
+                        }
+                        
+                        // Remplacer les valeurs dans les légendes
+                        if (trace.name) {
+                            // Vérifier si le nom contient une valeur de Campaign_Type
+                            Object.keys(campaignTypeMapping).forEach(key => {
+                                if (trace.name === key || trace.name.includes(`Campaign_Type=${key}`)) {
+                                    trace.name = trace.name.replace(key, campaignTypeMapping[key]);
+                                    trace.name = trace.name.replace(`Campaign_Type=${key}`, `Campaign_Type=${campaignTypeMapping[key]}`);
+                                }
+                            });
+                            
+                            // Vérifier si le nom contient une valeur de Channel_Used
+                            Object.keys(channelUsedMapping).forEach(key => {
+                                if (trace.name === key || trace.name.includes(`Channel_Used=${key}`)) {
+                                    trace.name = trace.name.replace(key, channelUsedMapping[key]);
+                                    trace.name = trace.name.replace(`Channel_Used=${key}`, `Channel_Used=${channelUsedMapping[key]}`);
+                                }
+                            });
                         }
                     }
-                }
-            }
-        });
-
-        // Animation on scroll
-        const animateElements = document.querySelectorAll('.animate-fadeInUp, .animate-fadeInRight, .animate-fadeInLeft');
-        
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                    observer.unobserve(entry.target);
+                    
+                    // Mettre à jour le graphique avec les nouvelles valeurs
+                    Plotly.redraw(chart);
                 }
             });
-        }, {
-            threshold: 0.1
-        });
+        }
         
-        animateElements.forEach(element => {
-            element.style.opacity = '0';
-            element.style.transform = 'translateY(20px)';
-            element.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
-            observer.observe(element);
-        });
-
-        // Hover effects for cards
-        const cards = document.querySelectorAll('.card');
-        cards.forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-5px)';
+        // Fonction pour décoder les valeurs dans le tableau HTML
+        function decodeTableData() {
+            const tableContainer = document.getElementById('table-data');
+            if (!tableContainer) return;
+            
+            // Sélectionner toutes les cellules du tableau
+            const tableCells = tableContainer.querySelectorAll('td');
+            
+            tableCells.forEach(cell => {
+                const text = cell.textContent.trim();
+                
+                // Vérifier si la cellule contient une valeur de Campaign_Type
+                if (Object.keys(campaignTypeMapping).includes(text) && 
+                    cell.previousElementSibling && 
+                    cell.previousElementSibling.textContent.includes('Campaign_Type')) {
+                    cell.textContent = campaignTypeMapping[text];
+                }
+                
+                // Vérifier si la cellule contient une valeur de Channel_Used
+                if (Object.keys(channelUsedMapping).includes(text) && 
+                    cell.previousElementSibling && 
+                    cell.previousElementSibling.textContent.includes('Channel_Used')) {
+                    cell.textContent = channelUsedMapping[text];
+                }
             });
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0)';
+        }
+        
+        // Tabs functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabTriggers = document.querySelectorAll('.tab-trigger');
+            
+            tabTriggers.forEach(trigger => {
+                trigger.addEventListener('click', function() {
+                    // Remove active class from all triggers and panels
+                    tabTriggers.forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+                    
+                    // Add active class to clicked trigger and corresponding panel
+                    this.classList.add('active');
+                    document.getElementById(this.dataset.tab).classList.add('active');
+                    
+                    // Redécoder les graphiques après le changement d'onglet
+                    setTimeout(decodePlotlyCharts, 100);
+                });
             });
+            
+            // Animation for KPI cards
+            const kpiCards = document.querySelectorAll('.kpi-card');
+            kpiCards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100 * index);
+            });
+            
+            // Responsive adjustments for Plotly charts
+            window.addEventListener('resize', function() {
+                const plots = document.querySelectorAll('.js-plotly-plot');
+                if (plots.length > 0) {
+                    plots.forEach(plot => {
+                        if (plot && plot.on) {
+                            plot.on('plotly_afterplot', function() {
+                                Plotly.Plots.resize(plot);
+                            });
+                        }
+                    });
+                }
+            });
+            
+            // Décoder les valeurs encodées dans les graphiques et tableaux
+            setTimeout(() => {
+                decodePlotlyCharts();
+                decodeTableData();
+            }, 500);
         });
-    });
-</script>
-{% endblock %}
+    </script>
+   
+ {% endblock %}

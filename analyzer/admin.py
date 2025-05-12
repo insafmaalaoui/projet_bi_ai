@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import Message, Activity
 
+
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):
     list_display = ('name', 'email', 'subject', 'status', 'created_at')
@@ -22,3 +23,4 @@ class ActivityAdmin(admin.ModelAdmin):
     list_filter = ('type', 'timestamp', 'user')
     search_fields = ('title', 'description', 'user__username')
     readonly_fields = ('timestamp',)
+    

@@ -1,0 +1,568 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Assistant IA - MARKETMIND{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Chat Container - MARKETMIND Styled */
+   :root {
+        --primary-color: #7AAEB5;
+        --secondary-color: #9ECBD1;
+        --accent-color: #5D8A91;
+        --dark-color: #334155;
+        --light-color: #F8FAFC;
+        --gray-color: #64748B;
+        --border-color: #E2E8F0;
+        
+        --primary-gradient: linear-gradient(135deg, #7AAEB5, #9ECBD1);
+        --secondary-gradient: linear-gradient(135deg, #F0F4FD, #E0F2F4);
+        --card-shadow: 0 10px 30px rgba(122, 174, 181, 0.15);
+        --hover-shadow: 0 15px 35px rgba(122, 174, 181, 0.25);
+        --transition-medium: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    
+    /* Welcome Banner */
+    .welcome-banner {
+           background: var(--secondary-gradient);
+        border-radius: 20px;
+        padding: 2.5rem;
+        margin-bottom: 2.5rem;
+        margin-top: 5rem;
+        box-shadow: var(--card-shadow);
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        animation: fadeInUp 1s ease-out;
+    }
+
+    .welcome-banner::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%237AAEB5' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+        opacity: 0.5;
+    }
+
+    .welcome-content {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    @media (min-width: 768px) {
+        .welcome-content {
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+    }
+
+    .welcome-title {
+        font-size: 2.25rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+        background: linear-gradient(to right, var(--accent-color), var(--primary-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: -0.5px;
+    }
+
+    .welcome-text {
+        color: var(--gray-color);
+        font-weight: 400;
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+    .chat-container {
+        background-color: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(122, 174, 181, 0.15);
+        overflow: hidden;
+        border: 1px solid rgba(226, 232, 240, 0.5);
+        margin-bottom: 1.75rem;
+        transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        height: 70vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .chat-container:hover {
+        box-shadow: 0 15px 35px rgba(122, 174, 181, 0.25);
+        border-color: rgba(122, 174, 181, 0.2);
+    }
+
+    .chat-header {
+        background: linear-gradient(135deg, #7AAEB5, #9ECBD1);
+        color: white;
+        padding: 1.25rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 600;
+        border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+        position: relative;
+    }
+
+    .chat-header h3 {
+        font-size: 1.1rem;
+        letter-spacing: -0.3px;
+        color: white;
+        margin: 0;
+    }
+
+    .history-controls {
+        display: flex;
+        gap: 5px;
+    }
+
+    .history-btn {
+        background: rgba(255,255,255,0.2);
+        border: none;
+        color: white;
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .history-btn:hover {
+        background: rgba(255,255,255,0.3);
+        transform: scale(1.1);
+    }
+
+    .chat-box {
+        flex: 1;
+        padding: 1.5rem;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        background-color: #F8FAFC;
+    }
+
+    .message {
+        margin-bottom: 1.25rem;
+        max-width: 85%;
+        animation: fadeInUp 0.5s ease-out;
+    }
+
+    .user-message {
+        align-self: flex-end;
+        text-align: right;
+    }
+
+    .bot-message {
+        align-self: flex-start;
+        text-align: left;
+    }
+
+    .message-content {
+        display: inline-block;
+        padding: 0.85rem 1.25rem;
+        border-radius: 1rem;
+        max-width: 100%;
+        word-wrap: break-word;
+        white-space: pre-wrap;
+        line-height: 1.6;
+        font-size: 0.95rem;
+    }
+
+    .user-message .message-content {
+        background: #d2e3fc;
+        color: #334155;
+        border-top-right-radius: 0;
+    }
+
+    .bot-message .message-content {
+        background: white;
+        color: #334155;
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        border-top-left-radius: 0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .chat-input-area {
+        display: flex;
+        padding: 1rem;
+        border-top: 1px solid rgba(226, 232, 240, 0.8);
+        gap: 0.75rem;
+        background: white;
+    }
+
+    .chat-input {
+        flex: 1;
+        padding: 0.85rem 1.25rem;
+        border-radius: 50px;
+        border: 2px solid rgba(226, 232, 240, 0.8);
+        background-color: #f8fafc;
+        color: #334155;
+        transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        font-size: 0.95rem;
+    }
+
+    .chat-input:focus {
+        outline: none;
+        border-color: #7AAEB5;
+        box-shadow: 0 0 0 4px rgba(122, 174, 181, 0.1);
+        background-color: #ffffff;
+    }
+
+    .send-btn {
+        background: linear-gradient(135deg, #7AAEB5, #9ECBD1);
+        color: white;
+        border: none;
+        padding: 0.85rem 1.5rem;
+        border-radius: 50px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .send-btn:hover {
+        background: linear-gradient(135deg, #6a9da5, #8ebac1);
+        box-shadow: 0 4px 15px rgba(122, 174, 181, 0.3);
+        transform: translateY(-2px);
+    }
+
+    .message-time {
+        font-size: 0.7em;
+        color: #64748B;
+        margin: 0.25rem 0;
+    }
+
+    .collapsed-message {
+        cursor: pointer;
+        opacity: 0.8;
+        max-height: 4.5rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        position: relative;
+    }
+
+    .collapsed-message::after {
+        content: "... (cliquez pour développer)";
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.8) 50%);
+        padding-top: 1.5rem;
+        text-align: center;
+        color: #64748B;
+        font-size: 0.8rem;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.02); }
+        100% { transform: scale(1); }
+    }
+
+    /* Typing indicator */
+    .typing-indicator {
+        display: inline-block;
+        padding: 0.85rem 1.25rem;
+        background: white;
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        border-radius: 1rem;
+        border-top-left-radius: 0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .typing-dots {
+        display: flex;
+        gap: 0.3rem;
+    }
+
+    .typing-dot {
+        width: 8px;
+        height: 8px;
+        background-color: #7AAEB5;
+        border-radius: 50%;
+        animation: typingAnimation 1.4s infinite ease-in-out;
+    }
+
+    .typing-dot:nth-child(1) { animation-delay: 0s; }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typingAnimation {
+        0%, 60%, 100% { transform: translateY(0); }
+        30% { transform: translateY(-5px); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Main Content -->
+<div class="main-content">
+    <div class="container">
+  <div class="welcome-banner">
+            <div class="welcome-content">
+                <div>
+                    <h2 class="welcome-title">Assistant Marketing IA</h2>
+                    <p class="welcome-text">Obtenez des conseils personnalisés pour vos campagnes marketing</p>
+                </div>
+                <div>
+                    <a href="{% url 'dashboard' %}" class="btn btn-primary">
+                        <i class="fas fa-chart-line"></i>
+                        Retour au tableau de bord
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!-- Welcome Banner -->
+
+        <!-- Chat Container -->
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <div class="history-controls">
+                            <button class="history-btn" id="prev-messages">
+                                <i class="fas fa-chevron-up"></i>
+                            </button>
+                            <button class="history-btn" id="next-messages">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                        </div>
+                        <h3>🎯 Assistant MARKETMIND</h3>
+                    </div>
+                    <div class="chat-box" id="chat-box"></div>
+                    <div class="chat-input-area">
+                        <input type="text" class="chat-input" id="user-input" placeholder="Posez votre question marketing..." />
+                        <button class="send-btn" onclick="sendMessage()">
+                            <i class="fas fa-paper-plane"></i>
+                            <span class="d-none d-md-inline">Envoyer</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const chatBox = document.getElementById('chat-box');
+        let allMessages = [];
+        let currentScrollPosition = 0;
+        const MESSAGES_PER_PAGE = 8;
+        let collapsedMessageIds = new Set();
+        let isTyping = false;
+
+        // Intro message on page load
+        const introMessage = {
+            id: Date.now(),
+            type: 'bot',
+            content: 'Bonjour ! Je suis votre assistant MARKETMIND en marketing digital. Je peux vous aider avec vos campagnes, votre ciblage, votre budget publicitaire et vos analyses de performance. Comment puis-je vous aider aujourd\'hui ?',
+            timestamp: new Date()
+        };
+        allMessages.push(introMessage);
+        renderMessages();
+
+        // Toggle message collapse/expand
+        function toggleMessageCollapse(messageId) {
+            if (collapsedMessageIds.has(messageId)) {
+                collapsedMessageIds.delete(messageId);
+            } else {
+                collapsedMessageIds.add(messageId);
+            }
+            renderMessages();
+        }
+
+        // Show typing indicator
+        function showTypingIndicator() {
+            if (isTyping) return;
+            
+            isTyping = true;
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot-message';
+            typingDiv.id = 'typing-indicator';
+            typingDiv.innerHTML = `
+                <div class="typing-indicator">
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+            `;
+            chatBox.appendChild(typingDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Hide typing indicator
+        function hideTypingIndicator() {
+            isTyping = false;
+            const typingIndicator = document.getElementById('typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        // Render messages with current pagination and collapse state
+        function renderMessages() {
+            chatBox.innerHTML = '';
+            
+            // Show only a subset of messages for pagination
+            const startIdx = Math.max(0, allMessages.length - MESSAGES_PER_PAGE - currentScrollPosition);
+            const endIdx = allMessages.length - currentScrollPosition;
+            const messagesToShow = allMessages.slice(startIdx, endIdx);
+            
+            messagesToShow.forEach(msg => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${msg.type}-message`;
+                messageDiv.dataset.id = msg.id;
+                
+                const timeDiv = document.createElement('div');
+                timeDiv.className = 'message-time';
+                timeDiv.textContent = msg.timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'message-content';
+                
+                // Check if message should be collapsed
+                const shouldCollapse = collapsedMessageIds.has(msg.id) && msg.content.length > 200;
+                
+                if (shouldCollapse) {
+                    contentDiv.classList.add('collapsed-message');
+                    contentDiv.textContent = msg.content.substring(0, 200);
+                } else {
+                    contentDiv.innerHTML = marked.parse(msg.content.replace(/\n/g, "<br>"));
+                }
+                
+                // Add click handler for long messages
+                if (msg.content.length > 200) {
+                    contentDiv.style.cursor = 'pointer';
+                    contentDiv.onclick = () => toggleMessageCollapse(msg.id);
+                }
+                
+                messageDiv.appendChild(timeDiv);
+                messageDiv.appendChild(contentDiv);
+                chatBox.appendChild(messageDiv);
+            });
+            
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('user-input');
+            const message = input.value.trim();
+
+            if (!message) return;
+
+            // Add user message to history
+            const userMessage = {
+                id: Date.now(),
+                type: 'user',
+                content: message,
+                timestamp: new Date()
+            };
+            allMessages.push(userMessage);
+            renderMessages();
+
+            // Show typing indicator
+            showTypingIndicator();
+
+            // Clear input
+            input.value = '';
+
+            // Send to backend
+            try {
+                const response = await fetch('/chatbot-response/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_input: message })
+                });
+
+                const data = await response.json();
+                const botReply = data.response || data.error || "Erreur inconnue de l'assistant.";
+
+                // Hide typing indicator
+                hideTypingIndicator();
+
+                // Add bot response to history
+                const botMessage = {
+                    id: Date.now() + 1, // Ensure unique ID
+                    type: 'bot',
+                    content: botReply,
+                    timestamp: new Date()
+                };
+                allMessages.push(botMessage);
+                
+                // Auto-collapse very long messages
+                if (botReply.length > 500) {
+                    collapsedMessageIds.add(botMessage.id);
+                }
+                
+                renderMessages();
+                currentScrollPosition = 0; // Reset to most recent messages
+
+            } catch (error) {
+                hideTypingIndicator();
+                const errorMessage = {
+                    id: Date.now() + 1,
+                    type: 'bot',
+                    content: `Erreur : ${error.message}`,
+                    timestamp: new Date()
+                };
+                allMessages.push(errorMessage);
+                renderMessages();
+            }
+        }
+
+        // Navigation through message history
+        document.getElementById('prev-messages').addEventListener('click', () => {
+            if (currentScrollPosition + MESSAGES_PER_PAGE < allMessages.length) {
+                currentScrollPosition += MESSAGES_PER_PAGE;
+                renderMessages();
+            }
+        });
+
+        document.getElementById('next-messages').addEventListener('click', () => {
+            if (currentScrollPosition - MESSAGES_PER_PAGE >= 0) {
+                currentScrollPosition -= MESSAGES_PER_PAGE;
+                renderMessages();
+            } else if (currentScrollPosition > 0) {
+                currentScrollPosition = 0;
+                renderMessages();
+            }
+        });
+
+        // Send message with Enter key
+        document.getElementById("user-input").addEventListener("keypress", function (e) {
+            if (e.key === "Enter") sendMessage();
+        });
+    });
+</script>
+{% endblock %}

@@ -512,8 +512,9 @@
                     <a href="/#about" class="navbar-link">À propos</a>
                     <a href="/#services" class="navbar-link">Services</a>
                     <a href="/#contact" class="navbar-link">Contact</a>
+                    <a href="{% url 'chat' %}"  class="navbar-link">AI Assistant</a>
                 </div>
-                
+
                 <div class="navbar-right">
                     {% if user.is_authenticated %}
                         <div class="user-dropdown" id="userDropdown">

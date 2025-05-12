@@ -745,11 +745,7 @@
                         <h3>Formulaire de prédiction</h3>
                     </div>
                     <div class="card-body">
-                        <div class="form-step-indicator">
-                            <div class="step-dot active"></div>
-                            <div class="step-dot"></div>
-                            <div class="step-dot"></div>
-                        </div>
+                       
                         
                         <form method="post" class="prediction-form">
                             {% csrf_token %}
@@ -867,6 +863,7 @@
                                     </div>
                                 </div>
                             </div>
+
                         </div>
                         {% endif %}
                     </div>
@@ -879,7 +876,7 @@
 
 {% block extra_js %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+      document.addEventListener('DOMContentLoaded', function() {
         // Gestion des sliders (input range)
         const rangeInputs = document.querySelectorAll('input[type="range"]');
         rangeInputs.forEach(input => {
@@ -905,38 +902,23 @@
             });
         });
         
-        // Simuler une progression par étapes
-        const submitButton = document.querySelector('.prediction-form button[type="submit"]');
-        const stepDots = document.querySelectorAll('.step-dot');
-        let currentStep = 0;
+        // Correction: Supprimer la logique qui empêche la soumission du formulaire
+        // ou la remplacer par une logique qui fonctionne correctement
         
-        if (submitButton && !document.querySelector('.result-section')) {
-            submitButton.addEventListener('click', function(e) {
-                // Cette partie est juste pour la démonstration - à adapter selon vos besoins
-                if (!document.querySelector('.result-section')) {
-                    e.preventDefault();
-                    currentStep++;
-                    
-                    if (currentStep < stepDots.length) {
-                        stepDots.forEach((dot, index) => {
-                            dot.classList.toggle('active', index === currentStep);
-                        });
-                        
-                        // Simuler un chargement
-                        submitButton.disabled = true;
-                        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calcul en cours...';
-                        
-                        setTimeout(() => {
-                            submitButton.disabled = false;
-                            submitButton.innerHTML = '<i class="fas fa-calculator"></i> Prédire le ROI';
-                            
-                            if (currentStep === stepDots.length - 1) {
-                                // Soumettre le formulaire à la dernière étape
-                                document.querySelector('.prediction-form').submit();
-                            }
-                        }, 1500);
-                    }
-                }
+        const form = document.querySelector('.prediction-form');
+        const submitButton = form.querySelector('button[type="submit"]');
+        
+        // Ajouter un effet visuel sans bloquer la soumission
+        if (submitButton) {
+            submitButton.addEventListener('click', function() {
+                // Effet visuel uniquement
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calcul en cours...';
+                
+                // Laisser le formulaire se soumettre normalement
+                // Ne pas appeler e.preventDefault()
+                
+                // Optionnel: Ajouter un délai pour voir l'animation
+                // setTimeout(() => form.submit(), 500);
             });
         }
     });
